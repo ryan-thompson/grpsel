@@ -1,0 +1,512 @@
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:5)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:5)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:5)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:5)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:5)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:5)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:5)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+coef(fit)
+fit <- cv.grpselect(x, y, group, alpha = 0.9999)
+plot(fit)
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+fit$fit$beta
+L0Learn::L0Learn.fit(x,y)$beta
+L0Learn::L0Learn.fit(x,y)$beta[[1]]
+plot(L0Learn::L0Learn.fit(x,y))
+plot(L0Learn::L0Learn.cvfit(x,y))
+plot(fit)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:1)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+library(grpselect)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 10
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- cv.grpselect(x, y, group)
+plot(fit)
+sqrt((100/4)^2)
+sqrt(100)/4
+sqrt(100^2)/4
+library(grpselect)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- grpselect(x, y, group)
+coef(fit)
+fit$lambda
+fit$lambda[[1]]
+# Group subset selection
+fit <- grpselect(x, y, lambda = 0, penalty = 'L20L21')
+# Group subset selection
+fit <- grpselect(x, y, lambda = 0, ngamma = 1, penalty = 'L20L21')
+fit$lambda
+fit$gamma
+attributes(y.std)
+attributes(y.std)`scaled:scale`
+attributes(y.std)$`scaled:scale`
+fit$gamma * attributes(y.std)$`scaled:scale`
+glmnet::glmnet(x,y)$beta
+glmnet::glmnet(x,y)$lambda
+max(abs(t(x) %*% y))
+library(grpselect)
+# Group subset selection
+fit <- grpselect(x, y, lambda = 0, ngamma = 1, penalty = 'L20L21')
+fit$lambda
+fit$gamma
+# Group subset selection
+fit <- grpselect(x, y)
+coef(fit)
+library(grpselect)
+# Group subset selection
+fit <- grpselect(x, y)
+coef(fit)
+library(grpselect)
+y.train <- rnorm(100)
+y.valid <- rnorm(100)
+y.train <- standardise(y.train)
+y.train <- grpselect:::standardise(y.train)
+y.train <- as.matrix(y.train)
+y.valid <- as.matrix(y.valid)
+y.train <- grpselect:::standardise(y.train)
+sum(y.train^2)
+y.valid <- y.valid[1:50,drop=F]
+y.valid
+y.valid <- standardise(y.valid, attributes(y.train)$`scaled:center`, attributes(y.train)$`scaled:scale`)
+y.valid <- grpselect:::standardise(y.valid, attributes(y.train)$`scaled:center`, attributes(y.train)$`scaled:scale`)
+y.valid <- grpselect:::standardise(as.matrix(y.valid), attributes(y.train)$`scaled:center`, attributes(y.train)$`scaled:scale`)
+sum(y.valid^2)
+library(grpselect)
+y <- rnorm(100)
+x <- rnorm(100)
+y <- as.matrix(y)
+x <- as.matrix(x)
+y.std <- grpselect:::standardise(y)
+x.std <- grpselect:::standardise(x)
+lsfit(y.std ~ x.std)
+lm(y.std ~ x.std)
+x.std <- grpselect:::standardise(x) * sqrt(n)
+y.std <- grpselect:::standardise(y) * sqrt(n)
+lm(y.std ~ x.std)
+sum(x.std^2)
+y.std <- grpselect:::standardise(y) / sqrt(n)
+x.std <- grpselect:::standardise(x) / sqrt(n)
+sum(x.std^2)
+sum(y.std^2)
+lm(y.std ~ x.std)
+t(x.std) %*% y.std / 100
+t(x.std) %*% y.std
+x.std <- grpselect:::standardise(x)
+y.std <- grpselect:::standardise(y)
+t(x.std) %*% y.std / 100
+library(grpselect)
+library(grpselect)
+library(grpselect)
+library(grpselect)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- grpselect(x, y)
+coef(fit)
+library(grpselect)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- grpselect(x, y)
+coef(fit)
+library(grpselect)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- grpselect(x, y)
+coef(fit)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- grpselect(x, y)
+library(grpselect)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- grpselect(x, y)
+library(grpselect)
+library(grpselect)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- grpselect(x, y)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 1000
+G <- 1000
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- grpselect(x, y)
+fit$iter.cd[[1]]
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 1000
+G <- 200
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- grpselect(x, y)
+fit$iter.cd[[1]]
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 1000
+G <- 200
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- grpselect(x, y)
+library(grpselect)
+fit$iter.cd[[1]]
+library(grpselect)
+library(grpselect)
+# Group subset selection
+fit <- grpselect(x, y, penalty = 'L20L22', lambda = 0, gamma = 1)
+coef(fit)
+# Grouped data
+set.seed(123)
+n <- 100
+p <- 10
+G <- 5
+group <- rep(1:G, each = p / G)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+e <- rnorm(n)
+y <- x %*% beta + e
+# Group subset selection
+fit <- grpselect(x, y, penalty = 'L20L22', lambda = 0, gamma = 1)
+coef(fit)
+glmnet::glmnet(x,y,alpha=0,gamma=1)$beta
+coef(fit)
+glmnet::glmnet(x,y,alpha=0,lambda=1)$beta
+glmnet::glmnet(x,y,alpha=0,lambda=2)$beta
+library(grpselect)
+coef(fit)
+# Group subset selection
+fit <- grpselect(x, y, penalty = 'L20L22', lambda = 0, gamma = 1)
+coef(fit)
+plot(fit)
+glmnet::glmnet(x,y,alpha=0,lambda=2*sqrt(sum((y-mean(y))^2/n)))$beta
+# Group subset selection
+fit <- grpselect(x, y, penalty = 'L20L21', lambda = 0, gamma = 1)
+coef(fit)
+# Group subset selection
+fit <- grpselect(x, y, penalty = 'L20L21', lambda = 0, gamma = 0.1)
+coef(fit)
+glmnet::glmnet(x,y,alpha=1,lambda=2*sqrt(sum((y-mean(y))^2/n)))$beta
+glmnet::glmnet(x,y,alpha=1,lambda=sqrt(sum((y-mean(y))^2/n)))$beta
+glmnet::glmnet(x,y,alpha=1,lambda=0.1*sqrt(sum((y-mean(y))^2/n)))$beta
+# Group subset selection with ridge shrinkage
+fit <- grpselect(x, y, group, penalty = 'L20L22')
+coef(fit)
+# Group subset selection with ridge shrinkage
+fit <- grpselect(x, y, group, penalty = 'L20L22')
+library(grpselect)
+coef(fit)
+# Group subset selection with ridge shrinkage
+fit <- grpselect(x, y, group, penalty = 'L20L22')
+coef(fit)
+# Group subset selection with ridge shrinkage
+fit <- grpselect(x, y, group, penalty = 'L20L22')
+coef(fit)
+library(grpselect)
+# Group subset selection with ridge shrinkage
+fit <- grpselect(x, y, group, penalty = 'L20L22')
+# Group subset selection with ridge shrinkage
+fit <- grpselect(x, y, group, penalty = 'L20L22')
+coef(fit)
+library(grpselect)

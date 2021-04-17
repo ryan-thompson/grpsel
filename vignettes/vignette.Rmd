@@ -1,0 +1,263 @@
+---
+title: Guide to grpsel
+author: Ryan Thompson
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Guide to grpsel}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 5
+)
+```
+
+## Introduction
+
+`grpsel` is an `R` package for group subset selection. For a response vector $Y$ and predictor matrix $X$, whose columns are each assigned to one (or more) of $g$ groups, `grpsel` is capable of approximately solving problems of the form:
+$$
+\min_\beta L(\beta;X,y)+\lambda\sum_{k=1}^g1(\|\beta_k\|_2\neq0)+\gamma\sum_{k=1}^g\|\beta_k\|_2^q,\quad q\in\{1,2\}
+$$
+where the first term is a loss function (square of logistic), the second term is a group subset selection penalty, and the third term is a shrinkage penalty (specifically, a group lasso penalty if $q=1$ and a ridge penalty if $q=2$). The notation $\beta_k$ denotes the coefficients belonging to the $k$th group.
+
+Group-sparse regression arises in numerous settings in modern data analytic work, including selection with categorical predictors, multitask (multiresponse) learning, hierarchical selection, and nonparametric additive regression. We demonstrate some example of these applications below.
+
+The `grpsel` package provides a simple set of functions for handling grouped selection in `R`. The two main functions provided by the package are `grpsel` and `cv.grpsel`, responsible for model fitting and cross-validation, respectively.
+
+The `grpsel` function provides a convenient way of performing group subset selection over the regularisation surface. To demonstrate this functionality, let's simulate some grouped data.
+
+```{r}
+set.seed(123)
+n <- 100 # Number of observations
+p <- 10 # Number of predictors
+g <- 5 # Number of groups
+group <- rep(1:g, each = p / g) # Group structure
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1 # First two groups are nonzero
+x <- matrix(rnorm(n * p), n, p)
+y <- x %*% beta + rnorm(n)
+```
+
+The first two groups explain the response while the rest are unimportant.
+
+```{r}
+library(grpsel)
+fit <- grpsel(x, y, group)
+```
+
+The `group` argument is optional, and if left unspecified each predictor will be assigned to its own group (leading to standard univariate variable selection).
+
+The values of $\lambda$ are automatically computed from the data, providing a path of solutions from the null model to the full model. These solutions can be extracted using the `coef` function.
+
+```{r}
+coef(fit)
+```
+
+Each of the columns above correspond to a set of estimated coefficients for a particular value of $\lambda$, with the first row containing the intercept terms. These coefficients can be visualised via the `plot` function.
+
+```{r}
+plot(fit)
+```
+
+The plot above omits the intercept terms and displays the coefficients by the number of selected groups rather than $\lambda$.
+
+The `predict` function is available to make predictions for new data.
+
+```{r}
+x.new <- matrix(rnorm(10 * p), 10, p)
+predict(fit, x.new)
+```
+
+Again, the columns represent predictions for different values of $\lambda$.
+
+By default, `grpsel` sets $\gamma=0$. In certain situations, the shrinkage induced by the setting $\gamma>0$ is desirable (e.g., when the level of noise is high). To fit the model for both $\lambda$ and $\gamma$, use the argument `penalty='grSubset+grLasso'` or `penalty='grSubset+Ridge'`. To extract the coefficients for specific values of $\lambda$ and $\gamma$, the `lambda` and `gamma` arguments of `coef` are available.
+
+```{r}
+fit <- grpsel(x, y, group, penalty = 'grSubset+grLasso')
+coef(fit, lambda = 0.05, gamma = 0.1)
+
+fit <- grpsel(x, y, group, penalty = 'grSubset+Ridge')
+coef(fit, lambda = 0.05, gamma = 0.1)
+```
+
+Similar arguments exist for `predict`.
+
+In practice, $\lambda$ and $\gamma$ usually need to be cross-validated. The `cv.grpsel` function provides a convenient way to perform group subset selection with cross-validation.
+
+```{r}
+cvfit <- cv.grpsel(x, y, group, penalty = 'grSubset+Ridge', nfold = 5) # 5-fold cross-validation
+```
+
+The cross-validation results are easily visualised using the `plot` function.
+
+```{r}
+plot(cvfit)
+```
+
+The plot above shows the cross-validated mean square error as a function of the number of selected groups for the best cross-validated value of $\gamma$. Plots for other values of $\gamma$ can be produced using the `gamma` argument of `plot`. From the plot, it is clear that the minimum error is attained when the regression model selects two groups, which so happens to be the truth.
+
+The `coef` and `predict` functions applied to the output of `cv.grpsel` return results corresponding to the values of $\lambda$ and $\gamma$ that minimise the cross-validated mean square error.
+
+```{r}
+coef(cvfit)
+predict(cvfit, x.new)
+```
+
+Note that `grpsel` does not need to be run after using `cv.grpsel`, as the latter calls the former and saves the result as `cvfit$fit`.
+
+Finally, to perform a logistic regression fit, simply set `loss='logistic'`.
+
+```{r}
+y <- pmax(sign(y), 0)
+
+fit <- cv.grpsel(x, y, group, loss = 'logistic')
+coef(fit)
+```
+
+## Overlapping groups
+
+It is straightforward to model overlapping groups using `grpsel`. To demonstrate, suppose there are five predictors spread among two groups: {1,2,3} and {3,4,5}, where $x_3$ belongs to both groups.
+
+```{r}
+p <- 5
+x <- matrix(rnorm(n * p), n, p)
+y <- rowSums(x) + rnorm(n)
+group <- list(c(1, 2, 3), c(3, 4, 5))
+fit <- grpsel(x, y, group)
+```
+
+The object `group` is now a list of groups rather than a vector as before.
+
+```{r}
+coef(fit)
+```
+
+## Algorithms
+
+The primary algorithm driving `grpsel` is coordinate descent. Sometimes, typically when the groups are strongly correlated, the estimate produced by coordinate descent can be improved using local search, a custom algorithm that runs on top of coordinate descent. To use local search, set `ls=T`.
+
+```{r}
+p <- 10
+group <- rep(1:g, each = p / g)
+Sigma <- 0.9 ^ t(sapply(1:p, function(i, j) abs(i - j), 1:p))
+x <- matrix(rnorm(n * p), n, p)
+x <- t(chol(Sigma) %*% t(x))
+y <- x %*% beta + rnorm(n)
+fit <- cv.grpsel(x, y, group)
+coef(fit)
+fit <- cv.grpsel(x, y, group, ls = T)
+coef(fit)
+```
+
+In this high-correlation example, the correct groups are not selected without local search.
+
+## Demonstrations
+
+In this section we show how `grpsel` can be used to fit a variety of statistical models.
+
+### Multitask learning
+
+Multitask learning is useful where $Y$ is a matrix and it is suspected that each column of $Y$ can be explained by the same set of predictors. In this case, we would like to perform a single fit on $Y$ rather than individual fits on each column.
+
+In this example, we will simulate two response variables, both of which depend on the first two predictors.
+
+```{r}
+n <- 100
+p <- 10
+m <- 2 # Number of response variables
+beta <- matrix(0, p, m)
+beta[1:2, ] <- 1
+x <- matrix(rnorm(n * p), n, p)
+y <- x %*% beta + matrix(rnorm(n * m), n, m)
+
+x <- scale(x)
+y <- scale(y)
+
+y <- matrix(y, ncol = 1)
+x <- diag(m) %x% x
+group <- rep(1:p, m)
+
+cvfit <- cv.grpsel(x, y, group)
+matrix(coef(cvfit)[- 1, , drop = F], ncol = 2)
+```
+
+The column of coefficients belong to the first column in $Y$, and the second column of coefficients to the second column of $Y$. The groups have enforced the constraint that both response variables must share the same set of predictors.
+
+### Nonparametric additive regression
+
+Group selection can be used to fit sparse nonparametric additive models of the form
+$$Y=\sum_{j=1}^pf_j(x_j)+\epsilon.$$ To fit these models we can approximate $f_1,\ldots,f_p$ using regression splines. In this example, the generating functions are
+$$
+\begin{aligned}
+f_1 &= \sin(2\pi x_1), \\ 
+f_2 &= \cos(2\pi x_2), \\ 
+f_3 &= 0,\,\text{and} \\ 
+&~~\vdots \\ 
+f_p &= 0.
+\end{aligned}
+$$
+To fit this model we will use natural cubic splines with three basis functions. The basis functions form a single group, and we have one such group for each predictor.
+
+```{r}
+n <- 100
+p <- 10
+x <- matrix(runif(n * p), n, p)
+y <- sin(2 * pi * x[, 1]) + cos(2 * pi * x[, 2]) + rnorm(n, sd = 0.1)
+splines <- lapply(1:p, function(j) splines::ns(x[, j], df = 3))
+x.s <- do.call(cbind, splines)
+group <- rep(1:p, each = 3)
+
+fit <- cv.grpsel(x.s, y, group)
+unique(group[coef(fit)[- 1] != 0])
+```
+
+The coefficients can be plotted as follows. The solid lines are the true functions while the dashed lines are the estimates.
+
+```{r}
+library(ggplot2)
+
+beta0 <- coef(fit)[1]
+beta <- coef(fit)[- 1]
+int.x1 <- (beta0 + colMeans(x.s[, - (1:3)]) %*% beta[- (1:3)])[, ]
+int.x2 <- (beta0 + colMeans(x.s[, - (4:6)]) %*% beta[- (4:6)])[, ]
+
+ggplot(x = seq(0, 1, length.out = 101)) +
+  stat_function(fun = function(x) sin(2 * pi * x)) +
+  stat_function(fun = function(x) int.x1 + predict(splines[[1]], x) %*% beta[1:3], linetype = 'dashed')
+
+ggplot(x = seq(0, 1, length.out = 101)) +
+  stat_function(fun = function(x) cos(2 * pi * x)) +
+  stat_function(fun = function(x) int.x2 + predict(splines[[2]], x) %*% beta[4:6], linetype = 'dashed')
+```
+
+### Hierarchical interactions
+
+When modelling interactions between predictors it is often desirable to enforce the condition that an interaction can be selected only when its constituent predictors are selected, i.e., the coefficient on $x_1x_2$ can be nonzero only when the coefficients on $x_1$ and $x_2$ are nonzero. It is straightforward to enforce this hierarchical constraint using group selection.
+
+In this example, the main effects $x_1,$ $x_2$, $x_3$ are nonzero as well as the interactions $x_1x_2$ and $x_2x_3$.
+
+```{r}
+n <- 100
+p <- 10
+x <- matrix(rnorm(n * p), n, p)
+y <- x[, 1] + x[, 2] + x[, 3] + x[, 1] * x[, 2] + x[, 2] * x[, 3] + rnorm(n)
+
+x.int <- model.matrix(~ - 1 + . ^ 2, data = as.data.frame(x))
+fit <- cv.grpsel(x.int, y)
+colnames(x.int)[which(coef(fit)[- 1] != 0)]
+```
+
+The above fit has ignored the group structure that enforces the hierarchy constraint. The interaction
+$x_4x_6$ is selected even though its main effects are not.
+
+```{r}
+group <- c(1:p, mapply(c, combn(1:p, 2, simplify = F), 1:choose(p, 2) + p, SIMPLIFY = F))
+fit <- cv.grpsel(x.int, y, group)
+colnames(x.int)[which(coef(fit)[- 1] != 0)]
+```
+
+Adding the group structure successfully enforces hierarchy.
