@@ -3,4 +3,6 @@
 ^doc$
 ^Meta$
 ^README.Rmd
-^grpsel_0.1.0.pdf
+^\.git
+^.gitignore
+^cran-comments.md

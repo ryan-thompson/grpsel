@@ -7,10 +7,10 @@
 grpsel(
   x,
   y,
-  group = 1:ncol(x),
+  group = seq_len(ncol(x)),
   penalty = c("grSubset", "grSubset+grLasso", "grSubset+Ridge"),
   loss = c("square", "logistic"),
-  ls = F,
+  ls = FALSE,
   nlambda = 100,
   ngamma = 10,
   gamma.max = 100,
@@ -26,12 +26,12 @@ grpsel(
   eps = 1e-04,
   max.cd.iter = 10000,
   max.ls.iter = 100,
-  active.set = T,
+  active.set = TRUE,
   active.set.count = 3,
-  sort = T,
+  sort = TRUE,
   screen = 500,
-  orthogonalise = T,
-  warn = T
+  orthogonalise = TRUE,
+  warn = TRUE
 )
 }
 \arguments{

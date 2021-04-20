@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-`grpsel` is an `R` package for group subset selection. For a response vector $Y$ and predictor matrix $X$, whose columns are each assigned to one (or more) of $g$ groups, `grpsel` is capable of approximately solving problems of the form:
+`grpsel` is an R package for group subset selection. For a response vector $Y$ and predictor matrix $X$, whose columns are each assigned to one (or more) of $g$ groups, `grpsel` is capable of approximately solving problems of the form:
 $$
 \min_\beta L(\beta;X,y)+\lambda\sum_{k=1}^g1(\|\beta_k\|_2\neq0)+\gamma\sum_{k=1}^g\|\beta_k\|_2^q,\quad q\in\{1,2\}
 $$
@@ -26,9 +26,9 @@ where the first term is a loss function (square of logistic), the second term is
 
 Group-sparse regression arises in numerous settings in modern data analytic work, including selection with categorical predictors, multitask (multiresponse) learning, hierarchical selection, and nonparametric additive regression. We demonstrate some example of these applications below.
 
-The `grpsel` package provides a simple set of functions for handling grouped selection in `R`. The two main functions provided by the package are `grpsel` and `cv.grpsel`, responsible for model fitting and cross-validation, respectively.
+The `grpsel` package provides a simple set of functions for handling grouped selection in R. The two main functions provided by the package are `grpsel()` and `cv.grpsel()`, responsible for model fitting and cross-validation, respectively.
 
-The `grpsel` function provides a convenient way of performing group subset selection over the regularisation surface. To demonstrate this functionality, let's simulate some grouped data.
+The `grpsel()` function provides a convenient way of performing group subset selection over the regularisation surface. To demonstrate this functionality, let's simulate some grouped data.
 
 ```{r}
 set.seed(123)
@@ -51,13 +51,13 @@ fit <- grpsel(x, y, group)
 
 The `group` argument is optional, and if left unspecified each predictor will be assigned to its own group (leading to standard univariate variable selection).
 
-The values of $\lambda$ are automatically computed from the data, providing a path of solutions from the null model to the full model. These solutions can be extracted using the `coef` function.
+The values of $\lambda$ are automatically computed from the data, providing a path of solutions from the null model to the full model. These solutions can be extracted using the `coef()` function.
 
 ```{r}
 coef(fit)
 ```
 
-Each of the columns above correspond to a set of estimated coefficients for a particular value of $\lambda$, with the first row containing the intercept terms. These coefficients can be visualised via the `plot` function.
+Each of the columns above correspond to a set of estimated coefficients for a particular value of $\lambda$, with the first row containing the intercept terms. These coefficients can be visualised via the `plot()` function.
 
 ```{r}
 plot(fit)
@@ -65,7 +65,7 @@ plot(fit)
 
 The plot above omits the intercept terms and displays the coefficients by the number of selected groups rather than $\lambda$.
 
-The `predict` function is available to make predictions for new data.
+The `predict()` function is available to make predictions for new data.
 
 ```{r}
 x.new <- matrix(rnorm(10 * p), 10, p)
@@ -74,7 +74,7 @@ predict(fit, x.new)
 
 Again, the columns represent predictions for different values of $\lambda$.
 
-By default, `grpsel` sets $\gamma=0$. In certain situations, the shrinkage induced by the setting $\gamma>0$ is desirable (e.g., when the level of noise is high). To fit the model for both $\lambda$ and $\gamma$, use the argument `penalty='grSubset+grLasso'` or `penalty='grSubset+Ridge'`. To extract the coefficients for specific values of $\lambda$ and $\gamma$, the `lambda` and `gamma` arguments of `coef` are available.
+By default, `grpsel` sets $\gamma=0$. In certain situations, the shrinkage induced by the setting $\gamma>0$ is desirable (e.g., when the level of noise is high). To fit the model for both $\lambda$ and $\gamma$, use the argument `penalty='grSubset+grLasso'` or `penalty='grSubset+Ridge'`. To extract the coefficients for specific values of $\lambda$ and $\gamma$, the `lambda` and `gamma` arguments of `coef()` are available.
 
 ```{r}
 fit <- grpsel(x, y, group, penalty = 'grSubset+grLasso')
@@ -84,30 +84,30 @@ fit <- grpsel(x, y, group, penalty = 'grSubset+Ridge')
 coef(fit, lambda = 0.05, gamma = 0.1)
 ```
 
-Similar arguments exist for `predict`.
+Similar arguments exist for `predict()`.
 
-In practice, $\lambda$ and $\gamma$ usually need to be cross-validated. The `cv.grpsel` function provides a convenient way to perform group subset selection with cross-validation.
+In practice, $\lambda$ and $\gamma$ usually need to be cross-validated. The `cv.grpsel()` function provides a convenient way to perform group subset selection with cross-validation.
 
 ```{r}
 cvfit <- cv.grpsel(x, y, group, penalty = 'grSubset+Ridge', nfold = 5) # 5-fold cross-validation
 ```
 
-The cross-validation results are easily visualised using the `plot` function.
+The cross-validation results are easily visualised using the `plot()` function.
 
 ```{r}
 plot(cvfit)
 ```
 
-The plot above shows the cross-validated mean square error as a function of the number of selected groups for the best cross-validated value of $\gamma$. Plots for other values of $\gamma$ can be produced using the `gamma` argument of `plot`. From the plot, it is clear that the minimum error is attained when the regression model selects two groups, which so happens to be the truth.
+The plot above shows the cross-validated mean square error as a function of the number of selected groups for the best cross-validated value of $\gamma$. Plots for other values of $\gamma$ can be produced using the `gamma` argument of `plot()`. From the plot, it is clear that the minimum error is attained when the regression model selects two groups, which so happens to be the truth.
 
-The `coef` and `predict` functions applied to the output of `cv.grpsel` return results corresponding to the values of $\lambda$ and $\gamma$ that minimise the cross-validated mean square error.
+The `coef()` and `predict()` functions applied to the output of `cv.grpsel()` return results corresponding to the values of $\lambda$ and $\gamma$ that minimise the cross-validated mean square error.
 
 ```{r}
 coef(cvfit)
 predict(cvfit, x.new)
 ```
 
-Note that `grpsel` does not need to be run after using `cv.grpsel`, as the latter calls the former and saves the result as `cvfit$fit`.
+Note that `grpsel()` does not need to be run after using `cv.grpsel()`, as the latter calls the former and saves the result as `cvfit$fit`.
 
 Finally, to perform a logistic regression fit, simply set `loss='logistic'`.
 

@@ -47,10 +47,10 @@
 #'
 #' @export
 
-cv.grpsel <- function(x, y, group = 1:ncol(x),
+cv.grpsel <- function(x, y, group = seq_len(ncol(x)),
                       penalty = c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge'),
                       loss = c('square', 'logistic'), lambda = NULL, gamma = NULL, nfold = 10,
-                      folds = NULL, interpolate = T, cv.loss = NULL, ...) {
+                      folds = NULL, interpolate = TRUE, cv.loss = NULL, ...) {
 
   penalty <- match.arg(penalty)
   loss <- match.arg(loss)
@@ -74,7 +74,7 @@ cv.grpsel <- function(x, y, group = 1:ncol(x),
   fit <- grpsel(x, y, group, penalty, loss, lambda = lambda, gamma = gamma, ...)
   lambda <- fit$lambda
   gamma <- fit$gamma
-  nlambda <- sapply(lambda, length)
+  nlambda <- vapply(lambda, length, integer(1))
   ngamma <- length(fit$gamma)
   if (is.null(folds)) {
     if (loss == 'square') {
@@ -116,10 +116,10 @@ cv.grpsel <- function(x, y, group = 1:ncol(x),
   # Loop over folds
   for (fold in 1:nfold) {
     fold.ind <- which(folds == fold)
-    x.train <- x[- fold.ind, , drop = F]
-    x.valid <- x[fold.ind, , drop = F]
-    y.train <- y[- fold.ind, , drop = F]
-    y.valid <- y[fold.ind, , drop = F]
+    x.train <- x[- fold.ind, , drop = FALSE]
+    x.valid <- x[fold.ind, , drop = FALSE]
+    y.train <- y[- fold.ind, , drop = FALSE]
+    y.valid <- y[fold.ind, , drop = FALSE]
     fit.fold <- grpsel(x.train, y.train, group, penalty, loss, lambda = lambda.cv, gamma = gamma,
                        ...)
     for (i in 1:ngamma) {
@@ -130,7 +130,7 @@ cv.grpsel <- function(x, y, group = 1:ncol(x),
   # Cross-validation results
   cv.mean <- lapply(cv, colMeans)
   cv.sd <- lapply(cv, function(x) apply(x, 2, stats::sd)  / sqrt(nfold))
-  gamma.min.ind <- which.min(sapply(cv.mean, min))
+  gamma.min.ind <- which.min(vapply(cv.mean, min, numeric(1)))
   gamma.min <- gamma[gamma.min.ind]
   lambda.min.ind <- which.min(cv.mean[[gamma.min.ind]])
   lambda.min <- lambda[[gamma.min.ind]][lambda.min.ind]

@@ -3,7 +3,7 @@
 
 ## Overview
 
-An `R` package for sparse regression modelling with grouped predictors
+An R package for sparse regression modelling with grouped predictors
 (including overlapping groups). `grpsel` makes use of the group subset
 selection penalty, which usually leads to excellent selection and
 prediction. Optionally, the group subset penalty can be combined with a
@@ -20,8 +20,8 @@ devtools::install_github('ryan-thompson/grpsel')
 
 ## Usage
 
-The `grpsel` function fits a group subset regression model for a
-sequence of tuning parameters. The `cv.grpsel` function provides a
+The `grpsel()` function fits a group subset regression model for a
+sequence of tuning parameters. The `cv.grpsel()` function provides a
 convenient way to automatically cross-validate these parameters.
 
 ``` r

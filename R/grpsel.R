@@ -84,14 +84,14 @@
 #'
 #' @export
 
-grpsel <- function(x, y, group = 1:ncol(x),
+grpsel <- function(x, y, group = seq_len(ncol(x)),
                    penalty = c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge'),
-                   loss = c('square', 'logistic'), ls = F, nlambda = 100, ngamma = 10,
+                   loss = c('square', 'logistic'), ls = FALSE, nlambda = 100, ngamma = 10,
                    gamma.max = 100, gamma.min = 1e-4, lambda = NULL, gamma = NULL, pmax = ncol(x),
                    gmax = length(unique(group)), subset.factor = NULL, lasso.factor = NULL,
                    ridge.factor = NULL, alpha = 0.99, eps = 1e-4, max.cd.iter = 1e4,
-                   max.ls.iter = 100, active.set = T, active.set.count = 3, sort = T,
-                   screen = 500, orthogonalise = T, warn = T) {
+                   max.ls.iter = 100, active.set = TRUE, active.set.count = 3, sort = TRUE,
+                   screen = 500, orthogonalise = TRUE, warn = TRUE) {
 
   penalty <- match.arg(penalty)
   loss <- match.arg(loss)
@@ -142,7 +142,7 @@ grpsel <- function(x, y, group = 1:ncol(x),
   if (group.list) {
     coef.id <- sort(unlist(group))
     x <- x[, coef.id]
-    group <- rep(1:length(group), times = lengths(group))[order(unlist(group))]
+    group <- rep(seq_along(group), times = lengths(group))[order(unlist(group))]
   }
 
   # Preliminaries
@@ -159,9 +159,9 @@ grpsel <- function(x, y, group = 1:ncol(x),
   y.s <- attributes(y)$`scaled:scale`
 
   # Set up groups
-  groups <- stats::aggregate(1:p ~ group, FUN = c, simplify = F)[, 2]
+  groups <- stats::aggregate(1:p ~ group, FUN = c, simplify = FALSE)[, 2]
   groups0 <- lapply(groups, '-', 1) # For C++
-  gsize <- sapply(groups, length)
+  gsize <- vapply(groups, length, integer(1))
   if (is.null(subset.factor)) subset.factor <- gsize
   if (is.null(lasso.factor)) lasso.factor <- sqrt(gsize)
   if (is.null(ridge.factor)) ridge.factor <- rep(1, g)
@@ -204,8 +204,8 @@ grpsel <- function(x, y, group = 1:ncol(x),
         }
       }
       xr <- crossprod(x, r)
-      gamma.max <- max(sapply(which(lasso.factor != 0), function(l) sqrt(sum(xr[groups[[l]]] ^ 2)) /
-                                lasso.factor[l]))
+      gamma.max <- max(vapply(which(lasso.factor != 0), function(l) sqrt(sum(xr[groups[[l]]] ^ 2)) /
+                                lasso.factor[l], numeric(1)))
       gamma <- exp(seq(log(gamma.max), log(gamma.max * gamma.min), length.out = ngamma))
       gamma[1] <- gamma[1] * 1.00001 # Ensures first solution is zero when lambda=0
     } else if (penalty == 'grSubset+Ridge') {
@@ -214,7 +214,7 @@ grpsel <- function(x, y, group = 1:ncol(x),
   } else {
     ngamma <- length(gamma)
   }
-  if (is.null(lambda)) lambda <- replicate(ngamma, rep(- 1, nlambda), simplify = F)
+  if (is.null(lambda)) lambda <- replicate(ngamma, rep(- 1, nlambda), simplify = FALSE)
 
   # Fit regularisation surface
   result <- fitsurface(x, y, groups0, ls, penalty.factor, lambda, gamma,
@@ -229,7 +229,7 @@ grpsel <- function(x, y, group = 1:ncol(x),
   # Unwind standardisation
   result$beta <- mapply(unstandardise, beta = result$beta, intercept = result$intercept,
                         MoreArgs = list(x.c = x.c, x.s = x.s, y.c = y.c, y.s = y.s, loss = loss),
-                        SIMPLIFY = F)
+                        SIMPLIFY = FALSE)
   result$intercept <- NULL
 
   # Aggregate coefficients if groups overlap
@@ -283,13 +283,14 @@ coef.grpsel <- function(object, lambda = NULL, gamma = NULL, ...) {
   } else if (!is.null(gamma) & !is.null(lambda)) {
     index1 <- which.min(abs(gamma - object$gamma))
     index2 <- which.min(abs(lambda - object$lambda[[index1]]))
-    object$beta[[index1]][, index2, drop = F]
+    object$beta[[index1]][, index2, drop = FALSE]
   } else if (!is.null(gamma) & is.null(lambda)) {
     index <- which.min(abs(gamma - object$gamma))
     object$beta[[index]]
   } else if (is.null(gamma) & !is.null(lambda)) {
-    index <- sapply(object$lambda, function(x) which.min(abs(lambda - x)))
-    sapply(1:length(object$gamma), function(x) object$beta[[x]][, index[x], drop = F])
+    index <- vapply(object$lambda, function(x) which.min(abs(lambda - x)), integer(1))
+    vapply(seq_along(object$gamma), function(x) object$beta[[x]][, index[x], drop = FALSE],
+           numeric(nrow(object$beta[[1]])))
   }
 
 }
@@ -353,8 +354,8 @@ plot.grpsel <- function(x, gamma = 0, ...) {
 
   index <- which.min(abs(gamma - x$gamma))
   beta <- x$beta[[index]]
-  beta <- beta[- 1, , drop = F]
-  df <- data.frame(beta = as.vector(beta), predictor = as.factor(1:length(beta[, 1])),
+  beta <- beta[- 1, , drop = FALSE]
+  df <- data.frame(beta = as.vector(beta), predictor = as.factor(seq_along(beta[, 1])),
                    ng = rep(x$ng[[index]], each = nrow(beta)))
   df <- df[which(df$beta != 0), ]
   p <- ggplot2::ggplot(df, ggplot2::aes_string('ng', 'beta', col = 'predictor')) +

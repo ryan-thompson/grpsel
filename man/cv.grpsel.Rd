@@ -7,14 +7,14 @@
 cv.grpsel(
   x,
   y,
-  group = 1:ncol(x),
+  group = seq_len(ncol(x)),
   penalty = c("grSubset", "grSubset+grLasso", "grSubset+Ridge"),
   loss = c("square", "logistic"),
   lambda = NULL,
   gamma = NULL,
   nfold = 10,
   folds = NULL,
-  interpolate = T,
+  interpolate = TRUE,
   cv.loss = NULL,
   ...
 )

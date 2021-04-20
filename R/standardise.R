@@ -1,15 +1,15 @@
 # Standardarisation
-standardise <- function(x, center = T, scale = T) {
+standardise <- function(x, center = TRUE, scale = TRUE) {
   if (is.double(center)) {
     x.c <- center
-    center <- T
+    center <- TRUE
   } else if (center) {
     x.c <- centers(x)
   }
   if (center) x <- decenter(x, x.c)
   if (is.double(scale)) {
     x.s <- scale
-    scale <- T
+    scale <- TRUE
   } else if (scale) {
     x.s <- scales(x)
     if (any(x.s == 0)) x.s[x.s == 0] <- 1 # Handle constant variables
