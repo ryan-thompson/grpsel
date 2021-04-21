@@ -1,5 +1,0 @@
-"0","p <- 5"
-"0","x <- matrix(rnorm(n * p), n, p)"
-"0","y <- rowSums(x) + rnorm(n)"
-"0","group <- list(c(1, 2, 3), c(3, 4, 5))"
-"0","fit <- grpsel(x, y, group)"

@@ -1,1 +1,0 @@
-"0","cvfit <- cv.grpsel(x, y, group, penalty = 'grSubset+Ridge', nfold = 5) # 5-fold cross-validation"

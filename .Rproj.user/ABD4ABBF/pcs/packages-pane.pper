@@ -1,7 +1,0 @@
-{
-    "installOptions": {
-        "installFromRepository": false,
-        "libraryPath": "/home/ryan/R/x86_64-pc-linux-gnu-library/3.6",
-        "installDependencies": true
-    }
-}
