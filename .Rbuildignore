@@ -7,3 +7,4 @@
 ^.gitignore
 ^cran-comments.md
 ^CRAN-RELEASE$
+^.travis.yml
