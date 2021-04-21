@@ -8,6 +8,9 @@ knitr::opts_chunk$set(echo = T)
 
 # grpsel
 
+[![R-CMD-check](https://github.com/ryan-thompson/grpsel/workflows/R-CMD-check/badge.svg)](https://github.com/ryan-thompson/grpsel/actions)
+[![test-coverage](https://github.com/ryan-thompson/grpsel/workflows/test-coverage/badge.svg)](https://github.com/ryan-thompson/grpsel/actions)
+
 ## Overview
 
 An R package for sparse regression modelling with grouped predictors (including overlapping groups). `grpsel` makes use of the group subset selection penalty, which usually leads to excellent selection and prediction. Optionally, the group subset penalty can be combined with a group lasso or ridge penalty for added shrinkage. Linear and logistic regression are currently supported.
