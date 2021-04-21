@@ -18,7 +18,7 @@
 \item{...}{any other arguments}
 }
 \value{
-A matrix or array of predictions.
+A matrix of predictions.
 }
 \description{
 Generate predictions for new data using specified values of the tuning parameters.

@@ -114,7 +114,7 @@ grpsel <- function(x, y, group = seq_len(ncol(x)),
   if (!group.list & length(group) != ncol(x)) {
     stop('each column of x must be assigned to a group')
   }
-  if (nlambda < 1)  stop('nlambda must be at least one')
+  if (nlambda < 1) stop('nlambda must be at least one')
   if (ngamma < 1) stop('ngamma must be at least one')
   if (gamma.max <= 0) stop('gamma.max must be positive')
   if (gamma.min <= 0) stop('gamma.min must be positive')
@@ -268,7 +268,7 @@ grpsel <- function(x, y, group = seq_len(ncol(x)),
 #' @param gamma the value of gamma indexing the desired fit
 #' @param ... any other arguments
 #'
-#' @return An array of coefficients.
+#' @return A matrix of coefficients.
 #'
 #' @method coef grpsel
 #'
@@ -311,7 +311,7 @@ coef.grpsel <- function(object, lambda = NULL, gamma = NULL, ...) {
 #' @param gamma the value of gamma indexing the desired fit
 #' @param ... any other arguments
 #'
-#' @return A matrix or array of predictions.
+#' @return A matrix of predictions.
 #'
 #' @method predict grpsel
 #'

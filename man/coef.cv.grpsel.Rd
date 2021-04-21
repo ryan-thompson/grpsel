@@ -16,7 +16,7 @@
 \item{...}{any other arguments}
 }
 \value{
-A matrix or array of coefficients.
+A matrix of coefficients.
 }
 \description{
 Extracts coefficients for specified values of the tuning parameters.

@@ -158,7 +158,7 @@ cv.grpsel <- function(x, y, group = seq_len(ncol(x)),
 #' @param gamma the value of gamma indexing the desired fit
 #' @param ... any other arguments
 #'
-#' @return A matrix or array of coefficients.
+#' @return A matrix of coefficients.
 #'
 #' @method coef cv.grpsel
 #'
@@ -190,7 +190,7 @@ coef.cv.grpsel <- function(object, lambda = 'lambda.min', gamma = 'gamma.min', .
 #' @param gamma the value of gamma indexing the desired fit
 #' @param ... any other arguments
 #'
-#' @return A matrix or array of predictions.
+#' @return A matrix of predictions.
 #'
 #' @method predict cv.grpsel
 #'
