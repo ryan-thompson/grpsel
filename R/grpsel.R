@@ -118,7 +118,7 @@ grpsel <- function(x, y, group = seq_len(ncol(x)),
   if (ngamma < 1) stop('ngamma must be at least one')
   if (gamma.max <= 0) stop('gamma.max must be positive')
   if (gamma.min <= 0) stop('gamma.min must be positive')
-  if (penalty != 'L20' & !is.null(lambda)) {
+  if (penalty != 'grSubset' & !is.null(lambda)) {
     if (is.null(gamma) & length(lambda) != ngamma) {
       stop('lambda must be a list with of length ngamma')
     }
