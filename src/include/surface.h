@@ -41,7 +41,7 @@ public:
     r = y;
     if (loss_fun == 2) {
       double ybar = arma::mean(y);
-      int0 = std::log(ybar / (1 - ybar));
+      int0 = std::log(ybar / std::max(1 - ybar, 1e-8));
       exb = arma::vec(y.size(), arma::fill::ones) * std::exp(- int0);
       arma::vec pi = 1 / (1 + exb);
       r -= pi;
