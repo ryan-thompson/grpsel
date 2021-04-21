@@ -1,6 +1,9 @@
 
 # grpsel
 
+[![R-CMD-check](https://github.com/ryan-thompson/grpsel/workflows/R-CMD-check/badge.svg)](https://github.com/ryan-thompson/grpsel/actions)
+[![codecov](https://codecov.io/gh/ryan-thompson/grpsel/branch/master/graph/badge.svg)](https://github.com/ryan-thompson/grpsel/actions)
+
 ## Overview
 
 An R package for sparse regression modelling with grouped predictors
