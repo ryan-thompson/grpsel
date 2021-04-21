@@ -14,8 +14,12 @@ An R package for sparse regression modelling with grouped predictors (including 
 
 ## Installation
 
-To install `grpsel` from GitHub, run the following code:
+To install the latest stable version from CRAN, run the following code:
+``` {r, eval = F}
+install.packages('grpsel')
+```
 
+To install the latest development version from GitHub, run the following code:
 ``` {r, eval = F}
 devtools::install_github('ryan-thompson/grpsel')
 ```
@@ -23,7 +27,6 @@ devtools::install_github('ryan-thompson/grpsel')
 ## Usage
 
 The `grpsel()` function fits a group subset regression model for a sequence of tuning parameters. The `cv.grpsel()` function provides a convenient way to automatically cross-validate these parameters.
-
 ```{r, example} 
 library(grpsel)
 
@@ -38,14 +41,14 @@ beta[which(group %in% 1:2)] <- 1 # First two groups are nonzero
 x <- matrix(rnorm(n * p), n, p)
 y <- x %*% beta + rnorm(n)
 
-# Fit the group subset regularisation path
+# Fit the group subset selection regularisation path
 fit <- grpsel(x, y, group)
-coef(fit, lambda = 0.05)[, ]
+coef(fit, lambda = 0.05)
 
-# Cross-validate the group subset regularisation path
+# Cross-validate the group subset selection regularisation path
 fit <- cv.grpsel(x, y, group)
-coef(fit)[, ]
+coef(fit)
 ```
 
-Check out the package vignette for more help getting started.
+See the package [vignette](https://cran.r-project.org/web/packages/grpsel/vignettes/vignette.html) or [reference manual](https://cran.r-project.org/web/packages/grpsel/grpsel.pdf) for more help getting started.
 

@@ -1,20 +1,14 @@
 # Standardarisation
 standardise <- function(x, center = TRUE, scale = TRUE) {
-  if (is.double(center)) {
-    x.c <- center
-    center <- TRUE
-  } else if (center) {
+  if (center) {
     x.c <- centers(x)
+    x <- decenter(x, x.c)
   }
-  if (center) x <- decenter(x, x.c)
-  if (is.double(scale)) {
-    x.s <- scale
-    scale <- TRUE
-  } else if (scale) {
+  if (scale) {
     x.s <- scales(x)
     if (any(x.s == 0)) x.s[x.s == 0] <- 1 # Handle constant variables
+    x <- descale(x, x.s)
   }
-  if (scale) x <- descale(x, x.s)
   if (center) attributes(x)$`scaled:center` <- as.numeric(x.c)
   if (scale) attributes(x)$`scaled:scale` <- as.numeric(x.s)
   return(x)
