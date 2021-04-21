@@ -7,11 +7,11 @@
 ## Overview
 
 An R package for sparse regression modelling with grouped predictors
-(including overlapping groups). `grpsel` makes use of the group subset
-selection penalty, which usually leads to excellent selection and
-prediction. Optionally, the group subset penalty can be combined with a
-group lasso or ridge penalty for added shrinkage. Linear and logistic
-regression are currently supported.
+(including overlapping groups). `grpsel` uses the group subset selection
+penalty, which usually leads to excellent selection and prediction.
+Optionally, the group subset penalty can be combined with a group lasso
+or ridge penalty for added shrinkage. Linear and logistic regression are
+currently supported.
 
 ## Installation
 

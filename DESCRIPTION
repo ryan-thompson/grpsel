@@ -17,6 +17,6 @@ Encoding: UTF-8
 Imports: ggplot2, Rcpp
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 7.1.1
-Suggests: testthat, knitr, rmarkdown, covr
+Suggests: testthat, knitr, rmarkdown
 VignetteBuilder: knitr
 Config/testthat/edition: 3
