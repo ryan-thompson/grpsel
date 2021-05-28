@@ -68,7 +68,7 @@ value for \code{gamma} as a fraction of \code{gamma.max} when \code{penalty='grS
 \item{lambda}{an optional list of decreasing sequences of group subset parameters; the list
 should contain a vector for each value of \code{gamma}}
 
-\item{gamma}{an optional decreasing sequence of L21 or L22 parameters}
+\item{gamma}{an optional decreasing sequence of group lasso or ridge parameters}
 
 \item{pmax}{the maximum number of predictors ever allowed to be active; ignored if \code{lambda}
 is supplied}

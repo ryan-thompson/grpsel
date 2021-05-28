@@ -6,7 +6,7 @@
 #include "par.h"
 #include "loss.h"
 
-// Fit l20/l2q regularisation surface
+// Fit regularisation surface
 
 void surface::run(cd& cd, ls& ls) {
 
@@ -40,12 +40,12 @@ void surface::run(cd& cd, ls& ls) {
       par par(groups, alpha_j, lambda0, gamma1, gamma2, pen_fact, lips_const, loss_fun);
       cd.run(fit, par);
 
-      // Exit if any NaNs (e.g., constant response or predictors)
-
-      if (fit.beta.has_nan()) {
-        if (j > 0) j--;
-        break;
-      }
+      // // Exit if any NaNs (e.g., constant response or predictors)
+      //
+      // if (fit.beta.has_nan()) {
+      //   if (j > 0) j--;
+      //   break;
+      // }
 
       // Run local search for fixed values of lambda/gamma
 

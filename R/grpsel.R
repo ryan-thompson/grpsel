@@ -29,7 +29,7 @@
 #' value for \code{gamma} as a fraction of \code{gamma.max} when \code{penalty='grSubset+grLasso'}
 #' @param lambda an optional list of decreasing sequences of group subset parameters; the list
 #' should contain a vector for each value of \code{gamma}
-#' @param gamma an optional decreasing sequence of L21 or L22 parameters
+#' @param gamma an optional decreasing sequence of group lasso or ridge parameters
 #' @param pmax the maximum number of predictors ever allowed to be active; ignored if \code{lambda}
 #' is supplied
 #' @param gmax the maximum number of groups ever allowed to be active; ignored if \code{lambda} is
@@ -120,7 +120,7 @@ grpsel <- function(x, y, group = seq_len(ncol(x)),
   if (gamma.min <= 0) stop('gamma.min must be positive')
   if (penalty != 'grSubset' & !is.null(lambda)) {
     if (is.null(gamma) & length(lambda) != ngamma) {
-      stop('lambda must be a list with of length ngamma')
+      stop('lambda must be a list with length ngamma')
     }
     if (!is.null(gamma) & length(lambda) != length(gamma)) {
       stop('lambda must be a list with the same length as gamma')

@@ -10,7 +10,7 @@ void ls::run(fit& fit, par& par, cd& cd) {
   else ls::update_logistic(fit, par, cd);
 }
 
-// lss for square loss with orthogonal groups
+// Local search update for square loss with orthogonal groups
 
 void ls::update_square_orthogonal(fit& fit, par& par, cd& cd) {
 
@@ -108,7 +108,7 @@ void ls::update_square_orthogonal(fit& fit, par& par, cd& cd) {
 
 }
 
-// lss for square loss
+// Local search update for square loss
 
 void ls::update_square(fit& fit, par& par, cd& cd) {
 
@@ -233,7 +233,7 @@ void ls::update_square(fit& fit, par& par, cd& cd) {
 
 }
 
-// lss for logistic loss
+// Local search update for logistic loss
 
 void ls::update_logistic(fit& fit, par& par, cd& cd) {
 

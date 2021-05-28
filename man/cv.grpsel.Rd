@@ -24,8 +24,9 @@ cv.grpsel(
 
 \item{y}{a response vector}
 
-\item{group}{a vector of length \code{ncol(x)} with the jth entry identifying the group that the
-jth predictor belongs to}
+\item{group}{a vector of length \code{ncol(x)} with the jth element identifying the group that
+the jth predictor belongs to; alternatively, a list of vectors with the kth vector identifying
+the predictors that belong to the kth group (useful for overlapping groups)}
 
 \item{penalty}{the type of penalty to apply; one of 'grSubset', 'grSubset+grLasso', or
 'grSubset+Ridge'}
@@ -49,11 +50,11 @@ the cross-validation fits; see details below}
 \item{cv.loss}{an optional cross-validation loss-function to use; should accept a prediction
 vector x ^ T * beta and a response vector y}
 
-\item{...}{any other arguments for \code{grpsel}}
+\item{...}{any other arguments for \code{grpsel()}}
 }
 \value{
 An object of class cv.grpsel; a list with the following components:
-\item{cv.mean}{a list of vectors containing cross-validation averages per value of \code{lambda};
+\item{cv.mean}{a list of vectors containing cross-validation means per value of \code{lambda};
 an individual vector in the list for each value of \code{gamma}}
 \item{cd.sd}{a list of vectors containing cross-validation standard errors per value of
 \code{lambda}; an individual vector in the list for each value of \code{gamma}}
@@ -62,7 +63,7 @@ individual vector in the list for each value of \code{gamma}}
 \item{gamma}{a vector containing the values of \code{gamma} used in the fit}
 \item{lambda.min}{the value of lambda minimising \code{cv.mean}}
 \item{gamma.min}{the value of gamma minimising \code{cv.mean}}
-\item{fit}{the fit from running \code{grpsel} on the full data}
+\item{fit}{the fit from running \code{grpsel()} on the full data}
 }
 \description{
 Fits the regularisation surface for a regression model with a group subset selection

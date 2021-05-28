@@ -11,12 +11,12 @@ Description: Provides tools for sparse regression modelling with grouped predict
     penalty for added shrinkage. Linear and logistic regression are supported, as are overlapping 
     groups.
 URL: https://github.com/ryan-thompson/grpsel
-BugReports: https://github.com/ryan-thompson/grpsel
+BugReports: https://github.com/ryan-thompson/grpsel/issues
 License: GPL-3
 Encoding: UTF-8
 Imports: ggplot2, Rcpp
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 7.1.1
 Suggests: testthat, knitr, rmarkdown
-VignetteBuilder: knitr, rmarkdown
+VignetteBuilder: knitr
 Config/testthat/edition: 3
