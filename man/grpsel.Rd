@@ -173,6 +173,10 @@ plot(fit, gamma = 0.05)
 coef(fit, lambda = 0.05, gamma = 0.1)
 predict(fit, newx, lambda = 0.05, gamma = 0.1)
 }
+\references{
+Thompson, R. and Vahid, F. (2021). 'Group selection and shrinkage with application to
+sparse semiparametric modeling'. arXiv: \href{https://arxiv.org/abs/2105.12081}{2105.12081}.
+}
 \author{
 Ryan Thompson <ryan.thompson@monash.edu>
 }

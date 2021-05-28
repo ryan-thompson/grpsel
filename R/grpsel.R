@@ -80,6 +80,9 @@
 #' \item{loss}{a list of vectors containing the evaluated loss function per value of \code{lambda}
 #' evaluated; an individual vector in the list for each value of \code{gamma}}
 #'
+#' @references Thompson, R. and Vahid, F. (2021). 'Group selection and shrinkage with application to
+#' sparse semiparametric modeling'. arXiv: \href{https://arxiv.org/abs/2105.12081}{2105.12081}.
+#'
 #' @example R/examples/example-grpsel.R
 #'
 #' @export

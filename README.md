@@ -11,7 +11,8 @@ An R package for sparse regression modelling with grouped predictors
 penalty, which usually leads to excellent selection and prediction.
 Optionally, the group subset penalty can be combined with a group lasso
 or ridge penalty for added shrinkage. Linear and logistic regression are
-currently supported.
+currently supported. See [this paper](https://arxiv.org/abs/2105.12081)
+for more information.
 
 ## Installation
 
