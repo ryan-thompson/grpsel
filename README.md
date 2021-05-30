@@ -86,8 +86,9 @@ coef(fit)
     ## [10,] 0.0000000
     ## [11,] 0.0000000
 
+## Documentation
+
 See the package
 [vignette](https://cran.r-project.org/web/packages/grpsel/vignettes/vignette.html)
 or [reference
-manual](https://cran.r-project.org/web/packages/grpsel/grpsel.pdf) for
-more help getting started.
+manual](https://cran.r-project.org/web/packages/grpsel/grpsel.pdf).

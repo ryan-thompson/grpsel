@@ -53,5 +53,7 @@ fit <- cv.grpsel(x, y, group)
 coef(fit)
 ```
 
-See the package [vignette](https://cran.r-project.org/web/packages/grpsel/vignettes/vignette.html) or [reference manual](https://cran.r-project.org/web/packages/grpsel/grpsel.pdf) for more help getting started.
+## Documentation
+
+See the package [vignette](https://cran.r-project.org/web/packages/grpsel/vignettes/vignette.html) or [reference manual](https://cran.r-project.org/web/packages/grpsel/grpsel.pdf).
 
