@@ -16,6 +16,7 @@ cv.grpsel(
   folds = NULL,
   interpolate = TRUE,
   cv.loss = NULL,
+  cluster = NULL,
   ...
 )
 }
@@ -50,10 +51,13 @@ the cross-validation fits; see details below}
 \item{cv.loss}{an optional cross-validation loss-function to use; should accept a prediction
 vector x ^ T * beta and a response vector y}
 
+\item{cluster}{an optional cluster for running cross-validation in parallel; must be set up using
+\code{parallel::makeCluster}; each fold is evaluated on a different node of the cluster}
+
 \item{...}{any other arguments for \code{grpsel()}}
 }
 \value{
-An object of class cv.grpsel; a list with the following components:
+An object of class \code{cv.grpsel}; a list with the following components:
 \item{cv.mean}{a list of vectors containing cross-validation means per value of \code{lambda};
 an individual vector in the list for each value of \code{gamma}}
 \item{cd.sd}{a list of vectors containing cross-validation standard errors per value of
@@ -106,6 +110,11 @@ fit <- cv.grpsel(x, y, group, penalty = 'grSubset+Ridge')
 plot(fit)
 coef(fit)
 predict(fit, newx)
+
+# Parallel cross-validation
+cl <- parallel::makeCluster(2)
+fit <- cv.grpsel(x, y, group, cluster = cl)
+parallel::stopCluster(cl)
 }
 \author{
 Ryan Thompson <ryan.thompson@monash.edu>

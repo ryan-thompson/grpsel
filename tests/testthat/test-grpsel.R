@@ -287,7 +287,8 @@ test_that('number of groups does not exceed gmax', {
   y <- rnorm(100)
   fit <- grpsel(x, y, group, loss = 'square', eps = 1e-15, gmax = 2)
   beta <- coef(fit)[, ncol(coef(fit))]
-  group.sparsity <- sum(sapply(unique(group), function(k) norm(beta[- 1][which(group == k)], '2')) != 0)
+  group.sparsity <- sum(vapply(unique(group), \(k) norm(beta[- 1][which(group == k)], '2'),
+                               numeric(1)) != 0)
   expect_equal(group.sparsity, 2)
 })
 
@@ -310,7 +311,8 @@ test_that('number of group lasso solutions is ngamma', {
   gamma <- 0.1
   x <- matrix(rnorm(n * p), n, p)
   y <- matrix(rnorm(n))
-  fit <- grpsel(x, y, penalty = 'grSubset+grLasso', ngamma = 5, lambda = rep(list(0), 5), eps = 1e-15)
+  fit <- grpsel(x, y, penalty = 'grSubset+grLasso', ngamma = 5, lambda = rep(list(0), 5),
+                eps = 1e-15)
   beta <- coef(fit)
   expect_equal(ncol(beta), 5)
 })
@@ -322,7 +324,8 @@ test_that('number of group lasso solutions is ngamma for logistic loss', {
   gamma <- 0.1
   x <- matrix(rnorm(n * p), n, p)
   y <- rbinom(n, 1, 0.5)
-  fit <- grpsel(x, y, penalty = 'grSubset+grLasso', loss = 'logistic', ngamma = 5, lambda = rep(list(0), 5), eps = 1e-15)
+  fit <- grpsel(x, y, penalty = 'grSubset+grLasso', loss = 'logistic', ngamma = 5,
+                lambda = rep(list(0), 5), eps = 1e-15)
   beta <- coef(fit)
   expect_equal(ncol(beta), 5)
 })
@@ -334,7 +337,8 @@ test_that('number of group lasso solutions is ngamma for logistic loss', {
   gamma <- 0.1
   x <- matrix(rnorm(n * p), n, p)
   y <- rbinom(n, 1, 0.5)
-  fit <- grpsel(x, y, penalty = 'grSubset+grLasso', loss = 'logistic', ngamma = 5, lambda = rep(list(0), 5), lasso.factor = c(0, rep(1, 9)), eps = 1e-15)
+  fit <- grpsel(x, y, penalty = 'grSubset+grLasso', loss = 'logistic', ngamma = 5,
+                lambda = rep(list(0), 5), lasso.factor = c(0, rep(1, 9)), eps = 1e-15)
   beta <- coef(fit)
   expect_equal(ncol(beta), 5)
 })
@@ -346,7 +350,8 @@ test_that('number of group lasso solutions is ngamma', {
   gamma <- 0.1
   x <- matrix(rnorm(n * p), n, p)
   y <- rbinom(n, 1, 0.5)
-  fit <- grpsel(x, y, penalty = 'grSubset+grLasso', ngamma = 5, lambda = rep(list(0), 5), lasso.factor = c(0, rep(1, 9)), eps = 1e-15)
+  fit <- grpsel(x, y, penalty = 'grSubset+grLasso', ngamma = 5, lambda = rep(list(0), 5),
+                lasso.factor = c(0, rep(1, 9)), eps = 1e-15)
   beta <- coef(fit)
   expect_equal(ncol(beta), 5)
 })

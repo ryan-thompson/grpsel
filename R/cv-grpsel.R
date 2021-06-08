@@ -24,6 +24,8 @@
 #' the cross-validation fits; see details below
 #' @param cv.loss an optional cross-validation loss-function to use; should accept a prediction
 #' vector x ^ T * beta and a response vector y
+#' @param cluster an optional cluster for running cross-validation in parallel; must be set up using
+#' \code{parallel::makeCluster}; each fold is evaluated on a different node of the cluster
 #' @param ... any other arguments for \code{grpsel()}
 #'
 #' @details When \code{loss='logistic'} stratified cross-validation is used to balance
@@ -32,7 +34,7 @@
 #' sequence. This new sequence retains the same set of solutions on the full data, but often leads
 #' to superior cross-validation performance.
 #'
-#' @return An object of class cv.grpsel; a list with the following components:
+#' @return An object of class \code{cv.grpsel}; a list with the following components:
 #' \item{cv.mean}{a list of vectors containing cross-validation means per value of \code{lambda};
 #' an individual vector in the list for each value of \code{gamma}}
 #' \item{cd.sd}{a list of vectors containing cross-validation standard errors per value of
@@ -51,7 +53,7 @@
 cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
                penalty = c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge'),
                loss = c('square', 'logistic'), lambda = NULL, gamma = NULL, nfold = 10,
-               folds = NULL, interpolate = TRUE, cv.loss = NULL, ...) {
+               folds = NULL, interpolate = TRUE, cv.loss = NULL, cluster = NULL, ...) {
 
   penalty <- match.arg(penalty)
   loss <- match.arg(loss)
@@ -89,7 +91,6 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
   } else {
     nfold <- length(unique(folds))
   }
-  cv <- lapply(1:ngamma, \(i) matrix(nrow = nfold, ncol = nlambda[i]))
 
   # Save cross-validation loss functions
   if (is.null(cv.loss)) {
@@ -115,7 +116,7 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
   }
 
   # Loop over folds
-  for (fold in 1:nfold) {
+  cvf <- \(fold) {
     fold.ind <- which(folds == fold)
     x.train <- x[- fold.ind, , drop = FALSE]
     x.valid <- x[fold.ind, , drop = FALSE]
@@ -123,10 +124,18 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
     y.valid <- y[fold.ind, , drop = FALSE]
     fit.fold <- grpsel(x.train, y.train, group, penalty, loss, lambda = lambda.cv, gamma = gamma,
                        ...)
+    cv <- list()
     for (i in 1:ngamma) {
-      cv[[i]][fold, ] <- apply(predict(fit.fold, x.valid, gamma = gamma[i]), 2, cv.loss, y.valid)
+      cv[[i]] <- apply(predict(fit.fold, x.valid, gamma = gamma[i]), 2, cv.loss, y.valid)
     }
+    cv
   }
+  if (is.null(cluster)) {
+    cv <- lapply(1:nfold, cvf)
+  } else {
+    cv <- parallel::clusterApply(cluster, x = 1:nfold, fun = cvf)
+  }
+  cv <- lapply(1:ngamma, \(i) t(simplify2array(lapply(cv, `[[`, i))))
 
   # Compose cross-validation results
   cv.mean <- lapply(cv, colMeans)

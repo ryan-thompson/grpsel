@@ -63,7 +63,7 @@
 #' zero and scaled to unit l2-norm. For logistic regression (loss='logistic') only the predictors
 #' are centred and scaled and an intercept is fit during the course of the algorithm.
 #'
-#' @return An object of class grpsel; a list with the following components:
+#' @return An object of class \code{grpsel}; a list with the following components:
 #' \item{beta}{a list of matrices whose columns contain fitted coefficients for a given value of
 #' \code{lambda}; an individual matrix in the list for each value of \code{gamma}}
 #' \item{gamma}{a vector containing the values of \code{gamma} used in the fit}

@@ -27,3 +27,8 @@ fit <- cv.grpsel(x, y, group, penalty = 'grSubset+Ridge')
 plot(fit)
 coef(fit)
 predict(fit, newx)
+
+# Parallel cross-validation
+cl <- parallel::makeCluster(2)
+fit <- cv.grpsel(x, y, group, cluster = cl)
+parallel::stopCluster(cl)
