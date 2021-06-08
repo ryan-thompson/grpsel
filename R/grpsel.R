@@ -87,14 +87,14 @@
 #'
 #' @export
 
-grpsel <- function(x, y, group = seq_len(ncol(x)),
-                   penalty = c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge'),
-                   loss = c('square', 'logistic'), ls = FALSE, nlambda = 100, ngamma = 10,
-                   gamma.max = 100, gamma.min = 1e-4, lambda = NULL, gamma = NULL, pmax = ncol(x),
-                   gmax = length(unique(group)), subset.factor = NULL, lasso.factor = NULL,
-                   ridge.factor = NULL, alpha = 0.99, eps = 1e-4, max.cd.iter = 1e4,
-                   max.ls.iter = 100, active.set = TRUE, active.set.count = 3, sort = TRUE,
-                   screen = 500, orthogonalise = TRUE, warn = TRUE) {
+grpsel <- \(x, y, group = seq_len(ncol(x)),
+            penalty = c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge'),
+            loss = c('square', 'logistic'), ls = FALSE, nlambda = 100, ngamma = 10, gamma.max = 100,
+            gamma.min = 1e-4, lambda = NULL, gamma = NULL, pmax = ncol(x),
+            gmax = length(unique(group)), subset.factor = NULL, lasso.factor = NULL,
+            ridge.factor = NULL, alpha = 0.99, eps = 1e-4, max.cd.iter = 1e4, max.ls.iter = 100,
+            active.set = TRUE, active.set.count = 3, sort = TRUE, screen = 500,
+            orthogonalise = TRUE, warn = TRUE) {
 
   penalty <- match.arg(penalty)
   loss <- match.arg(loss)
@@ -207,7 +207,7 @@ grpsel <- function(x, y, group = seq_len(ncol(x)),
         }
       }
       xr <- crossprod(x, r)
-      gamma.max <- max(vapply(which(lasso.factor != 0), function(l) sqrt(sum(xr[groups[[l]]] ^ 2)) /
+      gamma.max <- max(vapply(which(lasso.factor != 0), \(l) sqrt(sum(xr[groups[[l]]] ^ 2)) /
                                 lasso.factor[l], numeric(1)))
       gamma <- exp(seq(log(gamma.max), log(gamma.max * gamma.min), length.out = ngamma))
       gamma[1] <- gamma[1] * 1.00001 # Ensures first solution is zero when lambda=0
@@ -238,8 +238,8 @@ grpsel <- function(x, y, group = seq_len(ncol(x)),
   # Aggregate coefficients if groups overlap
   if (group.list) {
     result$beta <- lapply(result$beta,
-                          function(beta) stats::aggregate(beta ~ c(0, coef.id), FUN = sum)[, - 1])
-    result$beta <- lapply(result$beta, function(beta) {colnames(beta) <- NULL; as.matrix(beta)})
+                          \(beta) stats::aggregate(beta ~ c(0, coef.id), FUN = sum)[, - 1])
+    result$beta <- lapply(result$beta, \(beta) {colnames(beta) <- NULL; as.matrix(beta)})
   }
 
   # Warn if maximum iterations reached
@@ -279,7 +279,7 @@ grpsel <- function(x, y, group = seq_len(ncol(x)),
 #'
 #' @importFrom stats "coef"
 
-coef.grpsel <- function(object, lambda = NULL, gamma = NULL, ...) {
+coef.grpsel <- \(object, lambda = NULL, gamma = NULL, ...) {
 
   if (is.null(gamma) & is.null(lambda)) {
     do.call(cbind, object$beta)
@@ -291,8 +291,8 @@ coef.grpsel <- function(object, lambda = NULL, gamma = NULL, ...) {
     index <- which.min(abs(gamma - object$gamma))
     object$beta[[index]]
   } else if (is.null(gamma) & !is.null(lambda)) {
-    index <- vapply(object$lambda, function(x) which.min(abs(lambda - x)), integer(1))
-    vapply(seq_along(object$gamma), function(x) object$beta[[x]][, index[x], drop = FALSE],
+    index <- vapply(object$lambda, \(x) which.min(abs(lambda - x)), integer(1))
+    vapply(seq_along(object$gamma), \(x) object$beta[[x]][, index[x], drop = FALSE],
            numeric(nrow(object$beta[[1]])))
   }
 
@@ -322,7 +322,7 @@ coef.grpsel <- function(object, lambda = NULL, gamma = NULL, ...) {
 #'
 #' @importFrom stats "predict"
 
-predict.grpsel <- function(object, x.new, lambda = NULL, gamma = NULL, ...) {
+predict.grpsel <- \(object, x.new, lambda = NULL, gamma = NULL, ...) {
 
   beta <- coef.grpsel(object, lambda, gamma, ...)
   if (!is.matrix(x.new)) x.new <- as.matrix(x.new)
@@ -353,7 +353,7 @@ predict.grpsel <- function(object, x.new, lambda = NULL, gamma = NULL, ...) {
 #'
 #' @importFrom graphics "plot"
 
-plot.grpsel <- function(x, gamma = 0, ...) {
+plot.grpsel <- \(x, gamma = 0, ...) {
 
   index <- which.min(abs(gamma - x$gamma))
   beta <- x$beta[[index]]

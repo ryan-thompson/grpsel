@@ -26,7 +26,7 @@
 #' vector x ^ T * beta and a response vector y
 #' @param ... any other arguments for \code{grpsel()}
 #'
-#' @details  When \code{loss='logistic'} stratified cross-validation is used to balance
+#' @details When \code{loss='logistic'} stratified cross-validation is used to balance
 #' the folds. When fitting to the cross-validation folds, \code{interpolate=TRUE} cross-validates
 #' the midpoints between consecutive \code{lambda} values rather than the original \code{lambda}
 #' sequence. This new sequence retains the same set of solutions on the full data, but often leads
@@ -48,10 +48,10 @@
 #'
 #' @export
 
-cv.grpsel <- function(x, y, group = seq_len(ncol(x)),
-                      penalty = c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge'),
-                      loss = c('square', 'logistic'), lambda = NULL, gamma = NULL, nfold = 10,
-                      folds = NULL, interpolate = TRUE, cv.loss = NULL, ...) {
+cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
+               penalty = c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge'),
+               loss = c('square', 'logistic'), lambda = NULL, gamma = NULL, nfold = 10,
+               folds = NULL, interpolate = TRUE, cv.loss = NULL, ...) {
 
   penalty <- match.arg(penalty)
   loss <- match.arg(loss)
@@ -89,14 +89,14 @@ cv.grpsel <- function(x, y, group = seq_len(ncol(x)),
   } else {
     nfold <- length(unique(folds))
   }
-  cv <- lapply(1:ngamma, function(i) matrix(nrow = nfold, ncol = nlambda[i]))
+  cv <- lapply(1:ngamma, \(i) matrix(nrow = nfold, ncol = nlambda[i]))
 
   # Save cross-validation loss functions
   if (is.null(cv.loss)) {
     if (loss == 'square') {
-      cv.loss <- function(xb, y) 0.5 * mean((y - xb) ^ 2)
+      cv.loss <- \(xb, y) 0.5 * mean((y - xb) ^ 2)
     } else if (loss == 'logistic') {
-      cv.loss <- function(xb, y) {
+      cv.loss <- \(xb, y) {
         pi <- pmax(1e-15, pmin(1 - 1e-15, 1 / (1 + exp(- xb))))
         - mean(y * log(pi) + (1 - y) * log(1 - pi))
       }
@@ -130,7 +130,7 @@ cv.grpsel <- function(x, y, group = seq_len(ncol(x)),
 
   # Compose cross-validation results
   cv.mean <- lapply(cv, colMeans)
-  cv.sd <- lapply(cv, function(x) apply(x, 2, stats::sd)  / sqrt(nfold))
+  cv.sd <- lapply(cv, \(x) apply(x, 2, stats::sd) / sqrt(nfold))
   gamma.min.ind <- which.min(vapply(cv.mean, min, numeric(1)))
   gamma.min <- gamma[gamma.min.ind]
   lambda.min.ind <- which.min(cv.mean[[gamma.min.ind]])
@@ -167,7 +167,7 @@ cv.grpsel <- function(x, y, group = seq_len(ncol(x)),
 #'
 #' @importFrom stats "coef"
 
-coef.cv.grpsel <- function(object, lambda = 'lambda.min', gamma = 'gamma.min', ...) {
+coef.cv.grpsel <- \(object, lambda = 'lambda.min', gamma = 'gamma.min', ...) {
 
   if (!is.null(lambda)) if (lambda == 'lambda.min') lambda <- object$lambda.min
   if (!is.null(gamma)) if (gamma == 'gamma.min') gamma <- object$gamma.min
@@ -199,7 +199,7 @@ coef.cv.grpsel <- function(object, lambda = 'lambda.min', gamma = 'gamma.min', .
 #'
 #' @importFrom stats "predict"
 
-predict.cv.grpsel <- function(object, x.new, lambda = 'lambda.min', gamma = 'gamma.min', ...) {
+predict.cv.grpsel <- \(object, x.new, lambda = 'lambda.min', gamma = 'gamma.min', ...) {
 
   if (!is.null(lambda)) if (lambda == 'lambda.min') lambda <- object$lambda.min
   if (!is.null(gamma)) if (gamma == 'gamma.min') gamma <- object$gamma.min
@@ -230,11 +230,11 @@ predict.cv.grpsel <- function(object, x.new, lambda = 'lambda.min', gamma = 'gam
 #'
 #' @importFrom graphics "plot"
 
-plot.cv.grpsel <- function(x, gamma = 'gamma.min', ...) {
+plot.cv.grpsel <- \(x, gamma = 'gamma.min', ...) {
 
   if (gamma == 'gamma.min') gamma <- x$gamma.min
   index <- which.min(abs(gamma - x$gamma))
-  df <- data.frame(cv.mean = x$cv.mean[[index]],  cv.sd = x$cv.sd[[index]],  ng = x$fit$ng[[index]])
+  df <- data.frame(cv.mean = x$cv.mean[[index]], cv.sd = x$cv.sd[[index]], ng = x$fit$ng[[index]])
   p <- ggplot2::ggplot(df, ggplot2::aes_string('ng', 'cv.mean')) +
     ggplot2::geom_point() +
     ggplot2::geom_errorbar(ggplot2::aes_string(ymin = 'cv.mean - cv.sd',

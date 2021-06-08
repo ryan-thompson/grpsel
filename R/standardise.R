@@ -1,5 +1,5 @@
-# Standardarisation
-standardise <- function(x, center = TRUE, scale = TRUE) {
+# Standardise data
+standardise <- \(x, center = TRUE, scale = TRUE) {
   if (center) {
     x.c <- centers(x)
     x <- decenter(x, x.c)
@@ -14,8 +14,8 @@ standardise <- function(x, center = TRUE, scale = TRUE) {
   return(x)
 }
 
-# Undo standardisation
-unstandardise <- function(beta, intercept, x.c, x.s, y.c, y.s, loss) {
+# Unstandardise coefficients
+unstandardise <- \(beta, intercept, x.c, x.s, y.c, y.s, loss) {
   if (loss == 'square') {
     beta <- beta / x.s * y.s
     intercept <- y.c - x.c %*% beta
