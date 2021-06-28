@@ -23,10 +23,11 @@
 #' \code{gmax} is reached first
 #' @param ngamma the number of group lasso or ridge regularisation parameters to evaluate when
 #' \code{gamma} is computed automatically
-#' @param gamma.max the maximum value for gamma when \code{penalty='grSubset+Ridge'}; when
+#' @param gamma.max the maximum value for \code{gamma} when \code{penalty='grSubset+Ridge'}; when
 #' \code{penalty='grSubset+grLasso'} \code{gamma.max} is computed automatically from the data
-#' @param gamma.min the minimum value for gamma when \code{penalty='grSubset+Ridge'} and the minimum
-#' value for \code{gamma} as a fraction of \code{gamma.max} when \code{penalty='grSubset+grLasso'}
+#' @param gamma.min the minimum value for \code{gamma} when \code{penalty='grSubset+Ridge'} and the
+#' minimum value for \code{gamma} as a fraction of \code{gamma.max} when
+#' \code{penalty='grSubset+grLasso'}
 #' @param lambda an optional list of decreasing sequences of group subset parameters; the list
 #' should contain a vector for each value of \code{gamma}
 #' @param gamma an optional decreasing sequence of group lasso or ridge parameters
@@ -184,7 +185,6 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
     lips.const <- lipschitz(x, groups0)
   }
   if (loss == 'logistic') lips.const <- lips.const / 4
-  # lips.const <- lips.const * 10
 
   # Set up regularisation sequences
   if (is.null(gamma)) {

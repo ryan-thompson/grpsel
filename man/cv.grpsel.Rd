@@ -65,8 +65,8 @@ an individual vector in the list for each value of \code{gamma}}
 \item{lambda}{a list of vectors containing the values of \code{lambda} used in the fit; an
 individual vector in the list for each value of \code{gamma}}
 \item{gamma}{a vector containing the values of \code{gamma} used in the fit}
-\item{lambda.min}{the value of lambda minimising \code{cv.mean}}
-\item{gamma.min}{the value of gamma minimising \code{cv.mean}}
+\item{lambda.min}{the value of \code{lambda} minimising \code{cv.mean}}
+\item{gamma.min}{the value of \code{gamma} minimising \code{cv.mean}}
 \item{fit}{the fit from running \code{grpsel()} on the full data}
 }
 \description{

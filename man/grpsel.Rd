@@ -59,11 +59,12 @@ typically leads to higher quality solutions}
 \item{ngamma}{the number of group lasso or ridge regularisation parameters to evaluate when
 \code{gamma} is computed automatically}
 
-\item{gamma.max}{the maximum value for gamma when \code{penalty='grSubset+Ridge'}; when
+\item{gamma.max}{the maximum value for \code{gamma} when \code{penalty='grSubset+Ridge'}; when
 \code{penalty='grSubset+grLasso'} \code{gamma.max} is computed automatically from the data}
 
-\item{gamma.min}{the minimum value for gamma when \code{penalty='grSubset+Ridge'} and the minimum
-value for \code{gamma} as a fraction of \code{gamma.max} when \code{penalty='grSubset+grLasso'}}
+\item{gamma.min}{the minimum value for \code{gamma} when \code{penalty='grSubset+Ridge'} and the
+minimum value for \code{gamma} as a fraction of \code{gamma.max} when
+\code{penalty='grSubset+grLasso'}}
 
 \item{lambda}{an optional list of decreasing sequences of group subset parameters; the list
 should contain a vector for each value of \code{gamma}}

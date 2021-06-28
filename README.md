@@ -89,6 +89,6 @@ coef(fit)
 ## Documentation
 
 See the package
-[vignette](https://cran.r-project.org/web/packages/grpsel/vignettes/vignette.html)
+[vignette](https://CRAN.R-project.org/package=grpsel/vignettes/vignette.html)
 or [reference
-manual](https://cran.r-project.org/web/packages/grpsel/grpsel.pdf).
+manual](https://CRAN.R-project.org/package=grpsel/grpsel.pdf).
