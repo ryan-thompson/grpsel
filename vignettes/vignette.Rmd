@@ -18,11 +18,11 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-`grpsel` is an R package for group subset selection (see [https://arxiv.org/abs/2105.12081](https://arxiv.org/abs/2105.12081)). For a response vector $Y$ and predictor matrix $X$, whose columns are each assigned to one (or more) of $g$ groups, `grpsel` is capable of approximately solving problems of the form:
+`grpsel` is an R package for group subset selection (see [https://arxiv.org/abs/2105.12081](https://arxiv.org/abs/2105.12081)). For a response vector $\mathbf{y}=(y_1,\ldots,y_n)^\top$, predictor matrix $\mathbf{X}=(\mathbf{x}_1,\ldots,\mathbf{x}_n)^\top$, and a set of $g$ groups, `grpsel` is capable of approximately solving problems of the form:
 $$
-\min_\beta L(\beta;X,y)+\lambda\sum_{k=1}^g1(\|\beta_k\|_2\neq0)+\gamma\sum_{k=1}^g\|\beta_k\|_2^q,\quad q\in\{1,2\}
+\min_\beta \sum_{i=1}^n\ell(\mathbf{x}_i^\top\beta,y_i)+\lambda\sum_{k=1}^g1(\|\beta_k\|_2\neq0)+\gamma\sum_{k=1}^g\|\beta_k\|_2^q,\quad q\in\{1,2\}
 $$
-where the first term is a loss function (square of logistic), the second term is a group subset selection penalty, and the third term is a shrinkage penalty (specifically, a group lasso penalty if $q=1$ and a ridge penalty if $q=2$). The notation $\beta_k$ denotes the coefficients belonging to the $k$th group.
+where the $\ell$ is a loss function (square or logistic), the second term is a group subset selection penalty, and the third term is a shrinkage penalty (specifically, a group lasso penalty if $q=1$ and a ridge penalty if $q=2$). The notation $\beta_k$ denotes the coefficients belonging to the $k$th group.
 
 Group-sparse regression arises in numerous settings in modern data analytic work, including selection with categorical predictors, multitask (multiresponse) learning, hierarchical selection, and nonparametric additive regression. We demonstrate some examples of these applications below.
 
@@ -49,7 +49,7 @@ library(grpsel)
 fit <- grpsel(x, y, group)
 ```
 
-The `group` argument is optional, and if left unspecified each predictor will be assigned to its own group (leading to standard univariate variable selection).
+The `group` argument is optional, and if left unspecified each predictor will be assigned to its own group (leading to ungrouped variable selection).
 
 The values of $\lambda$ are automatically computed from the data, providing a path of solutions from the null model to the full model. These solutions can be extracted using the `coef()` function.
 
@@ -98,7 +98,7 @@ The cross-validation results are easily visualised using the `plot()` function.
 plot(cvfit)
 ```
 
-The plot above shows the cross-validated mean square error as a function of the number of selected groups for the best cross-validated value of $\gamma$. Plots for other values of $\gamma$ can be produced using the `gamma` argument of `plot()`. From the plot, it is clear that the minimum error is attained when two groups are selected, which so happens to be the truth.
+The plot above shows the cross-validated loss (square or logistic) as a function of the number of selected groups for the best cross-validated value of $\gamma$. Plots for other values of $\gamma$ can be produced using the `gamma` argument of `plot()`. From the plot, it is clear that the minimum error is attained when two groups are selected, which so happens to be the truth.
 
 The `coef()` and `predict()` functions applied to the output of `cv.grpsel()` return results corresponding to the values of $\lambda$ and $\gamma$ that minimise the cross-validated mean square error.
 
@@ -130,7 +130,7 @@ group <- list(c(1, 2, 3), c(3, 4, 5))
 fit <- grpsel(x, y, group)
 ```
 
-The object `group` is now a list of groups rather than a vector as before.
+The object `group` is now a list of groups rather than a vector.
 
 ```{r}
 coef(fit)
@@ -164,7 +164,7 @@ In this section we show how `grpsel` can be used to fit a variety of statistical
 
 ### Multitask learning
 
-Multitask learning is useful where $Y$ is a matrix and it is suspected that each column of $Y$ can be explained by the same set of predictors. In this case, we would like to perform a single fit on $Y$ rather than individual fits on each column.
+Multitask learning is useful where the response is a matrix and it is suspected that each of its columns can be explained by the same set of predictors. In this case, we would like to perform a single fit rather than individual fits on each column.
 
 In this example, we will simulate ten response variables, each of which depend on the first five predictors.
 
@@ -192,14 +192,14 @@ The groups have enforced the constraint that all ten response variables must sha
 ### Nonparametric additive regression
 
 Group selection can be used to fit sparse nonparametric additive models of the form
-$$Y=\sum_{j=1}^pf_j(x_j)+\epsilon.$$ To fit these models we can approximate $f_1,\ldots,f_p$ using regression splines. In this example, the predictors are uniform on $[0,1]$ and the generating functions are
+$$y=\sum_{j=1}^pf_j(x_j)+\epsilon.$$ To fit these models we can approximate $f_1,\ldots,f_p$ using regression splines. In this example, the predictors are uniform on $[0,1]$ and the generating functions are
 $$
 \begin{aligned}
-f_1 &= \sin(2\pi x_1), \\ 
-f_2 &= \cos(2\pi x_2), \\ 
-f_3 &= 0,\,\text{and} \\ 
+f_1(x) &= \sin(2\pi x), \\ 
+f_2(x) &= \cos(2\pi x), \\ 
+f_3(x) &= 0,\,\text{and} \\ 
 &~~\vdots \\ 
-f_p &= 0.
+f_p(x) &= 0.
 \end{aligned}
 $$
 To fit this model we will use natural cubic splines with five basis functions. The basis functions of each spline form a group, and we have one such group for each predictor.
