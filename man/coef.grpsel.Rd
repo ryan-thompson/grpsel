@@ -9,9 +9,9 @@
 \arguments{
 \item{object}{an object of class \code{grpsel}}
 
-\item{lambda}{the value of lambda indexing the desired fit}
+\item{lambda}{the value of \code{lambda} indexing the desired fit}
 
-\item{gamma}{the value of gamma indexing the desired fit}
+\item{gamma}{the value of \code{gamma} indexing the desired fit}
 
 \item{...}{any other arguments}
 }

@@ -81,7 +81,7 @@ supplied}
 the group sizes by default}
 
 \item{lasso.factor}{a vector of penalty factors applied to the group lasso penalty; equal to the
-square roots of the group sizes by default}
+square root of the group sizes by default}
 
 \item{ridge.factor}{a vector of penalty factors applied to the ridge penalty; equal to a
 vector of ones by default}

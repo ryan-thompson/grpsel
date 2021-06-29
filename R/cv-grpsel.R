@@ -22,8 +22,8 @@
 #' that the ith observation belongs to
 #' @param interpolate a logical indicating whether to interpolate the \code{lambda} sequence for
 #' the cross-validation fits; see details below
-#' @param cv.loss an optional cross-validation loss-function to use; should accept a prediction
-#' vector x ^ T * beta and a response vector y
+#' @param cv.loss an optional cross-validation loss-function to use; should accept a vector of
+#' predicted values and a vector of actual values
 #' @param cluster an optional cluster for running cross-validation in parallel; must be set up using
 #' \code{parallel::makeCluster}; each fold is evaluated on a different node of the cluster
 #' @param ... any other arguments for \code{grpsel()}
@@ -165,8 +165,8 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
 #' @description Extracts coefficients for specified values of the tuning parameters.
 #'
 #' @param object an object of class \code{cv.grpsel}
-#' @param lambda the value of lambda indexing the desired fit
-#' @param gamma the value of gamma indexing the desired fit
+#' @param lambda the value of \code{lambda} indexing the desired fit
+#' @param gamma the value of \code{gamma} indexing the desired fit
 #' @param ... any other arguments
 #'
 #' @return A matrix of coefficients.
@@ -196,9 +196,9 @@ coef.cv.grpsel <- \(object, lambda = 'lambda.min', gamma = 'gamma.min', ...) {
 #' @description Generate predictions for new data using specified values of the tuning parameters.
 #'
 #' @param object an object of class \code{cv.grpsel}
-#' @param x.new a matrix or array of new values for the predictors
-#' @param lambda the value of lambda indexing the desired fit
-#' @param gamma the value of gamma indexing the desired fit
+#' @param x.new a matrix of new values for the predictors
+#' @param lambda the value of \code{lambda} indexing the desired fit
+#' @param gamma the value of \code{gamma} indexing the desired fit
 #' @param ... any other arguments
 #'
 #' @return A matrix of predictions.
@@ -229,7 +229,7 @@ predict.cv.grpsel <- \(object, x.new, lambda = 'lambda.min', gamma = 'gamma.min'
 #' of \code{gamma}.
 #'
 #' @param x an object of class \code{cv.grpsel}
-#' @param gamma the value of gamma indexing the desired fit
+#' @param gamma the value of \code{gamma} indexing the desired fit
 #' @param ... any other arguments
 #'
 #' @return A plot of the cross-validation results.
