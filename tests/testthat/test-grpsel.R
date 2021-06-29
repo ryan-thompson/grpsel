@@ -231,33 +231,33 @@ test_that('coefficients are extracted correctly', {
   set.seed(123)
   x <- matrix(rnorm(100 * 10), 100, 10)
   y <- rowSums(x) + rnorm(100)
-  fit.act <- grpsel(x, y, eps = 1e-15)
-  fit.tar <- glm(y ~ x, family = 'gaussian')
-  coef.act <- coef(fit.act, lambda = 0)
-  coef.tar <- as.matrix(as.numeric(coef(fit.tar)))
-  expect_equal(coef.act, coef.tar)
+  fit <- grpsel(x, y, eps = 1e-15)
+  fit.target <- glm(y ~ x, family = 'gaussian')
+  beta <- coef(fit, lambda = 0)
+  beta.target <- as.matrix(as.numeric(coef(fit.target)))
+  expect_equal(beta, beta.target)
 })
 
 test_that('predictions are computed correctly', {
   set.seed(123)
   x <- matrix(rnorm(100 * 10), 100, 10)
   y <- rowSums(x) + rnorm(100)
-  fit.act <- grpsel(x, y, eps = 1e-15)
-  fit.tar <- glm(y ~ x, family = 'gaussian')
-  pred.act <- predict(fit.act, x, lambda = 0)
-  pred.tar <- as.matrix(as.numeric(predict(fit.tar, as.data.frame(x))))
-  expect_equal(pred.act, pred.tar)
+  fit <- grpsel(x, y, eps = 1e-15)
+  fit.target <- glm(y ~ x, family = 'gaussian')
+  yhat <- predict(fit, x, lambda = 0)
+  yhat.target <- as.matrix(as.numeric(predict(fit.target, as.data.frame(x))))
+  expect_equal(yhat, yhat.target)
 })
 
 test_that('predictions are computed correctly when x is a data frame', {
   set.seed(123)
   x <- matrix(rnorm(100 * 10), 100, 10)
   y <- rowSums(x) + rnorm(100)
-  fit.act <- grpsel(x, y, eps = 1e-15)
-  fit.tar <- glm(y ~ x, family = 'gaussian')
-  pred.act <- predict(fit.act, as.data.frame(x), lambda = 0)
-  pred.tar <- as.matrix(as.numeric(predict(fit.tar, as.data.frame(x))))
-  expect_equal(pred.act, pred.tar)
+  fit <- grpsel(x, y, eps = 1e-15)
+  fit.target <- glm(y ~ x, family = 'gaussian')
+  yhat <- predict(fit, as.data.frame(x), lambda = 0)
+  yhat.target <- as.matrix(as.numeric(predict(fit.target, as.data.frame(x))))
+  expect_equal(yhat, yhat.target)
 })
 
 test_that('plot function returns a plot', {
@@ -298,7 +298,7 @@ test_that('number of ridge solutions is ngamma', {
   p <- 10
   gamma <- 0.1
   x <- matrix(rnorm(n * p), n, p)
-  y <- matrix(rnorm(n))
+  y <- rnorm(n)
   fit <- grpsel(x, y, penalty = 'grSubset+Ridge', ngamma = 5, lambda = rep(list(0), 5), eps = 1e-15)
   beta <- coef(fit)
   expect_equal(ncol(beta), 5)
@@ -310,7 +310,7 @@ test_that('number of group lasso solutions is ngamma', {
   p <- 10
   gamma <- 0.1
   x <- matrix(rnorm(n * p), n, p)
-  y <- matrix(rnorm(n))
+  y <- rnorm(n)
   fit <- grpsel(x, y, penalty = 'grSubset+grLasso', ngamma = 5, lambda = rep(list(0), 5),
                 eps = 1e-15)
   beta <- coef(fit)
