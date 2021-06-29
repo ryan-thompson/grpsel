@@ -48,8 +48,8 @@ that the ith observation belongs to}
 \item{interpolate}{a logical indicating whether to interpolate the \code{lambda} sequence for
 the cross-validation fits; see details below}
 
-\item{cv.loss}{an optional cross-validation loss-function to use; should accept a prediction
-vector x ^ T * beta and a response vector y}
+\item{cv.loss}{an optional cross-validation loss-function to use; should accept a vector of
+predicted values and a vector of actual values}
 
 \item{cluster}{an optional cluster for running cross-validation in parallel; must be set up using
 \code{parallel::makeCluster}; each fold is evaluated on a different node of the cluster}

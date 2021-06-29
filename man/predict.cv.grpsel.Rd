@@ -9,11 +9,11 @@
 \arguments{
 \item{object}{an object of class \code{cv.grpsel}}
 
-\item{x.new}{a matrix or array of new values for the predictors}
+\item{x.new}{a matrix of new values for the predictors}
 
-\item{lambda}{the value of lambda indexing the desired fit}
+\item{lambda}{the value of \code{lambda} indexing the desired fit}
 
-\item{gamma}{the value of gamma indexing the desired fit}
+\item{gamma}{the value of \code{gamma} indexing the desired fit}
 
 \item{...}{any other arguments}
 }

@@ -38,7 +38,7 @@
 #' @param subset.factor a vector of penalty factors applied to the group subset penalty; equal to
 #' the group sizes by default
 #' @param lasso.factor a vector of penalty factors applied to the group lasso penalty; equal to the
-#' square roots of the group sizes by default
+#' square root of the group sizes by default
 #' @param ridge.factor a vector of penalty factors applied to the ridge penalty; equal to a
 #' vector of ones by default
 #' @param alpha the step size taken when computing \code{lambda} from the data; should be a value
@@ -267,8 +267,8 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
 #' @description Extracts coefficients for specified values of the tuning parameters.
 #'
 #' @param object an object of class \code{grpsel}
-#' @param lambda the value of lambda indexing the desired fit
-#' @param gamma the value of gamma indexing the desired fit
+#' @param lambda the value of \code{lambda} indexing the desired fit
+#' @param gamma the value of \code{gamma} indexing the desired fit
 #' @param ... any other arguments
 #'
 #' @return A matrix of coefficients.
@@ -309,9 +309,9 @@ coef.grpsel <- \(object, lambda = NULL, gamma = NULL, ...) {
 #' @description Generate predictions for new data using specified values of the tuning parameters.
 #'
 #' @param object an object of class \code{grpsel}
-#' @param x.new a matrix or array of new values for the predictors
-#' @param lambda the value of lambda indexing the desired fit
-#' @param gamma the value of gamma indexing the desired fit
+#' @param x.new a matrix of new values for the predictors
+#' @param lambda the value of \code{lambda} indexing the desired fit
+#' @param gamma the value of \code{gamma} indexing the desired fit
 #' @param ... any other arguments
 #'
 #' @return A matrix of predictions.
@@ -342,7 +342,7 @@ predict.grpsel <- \(object, x.new, lambda = NULL, gamma = NULL, ...) {
 #' \code{gamma}.
 #'
 #' @param x an object of class \code{grpsel}
-#' @param gamma the value of gamma indexing the desired fit
+#' @param gamma the value of \code{gamma} indexing the desired fit
 #' @param ... any other arguments
 #'
 #' @return A plot of the coefficient profiles.

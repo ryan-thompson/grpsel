@@ -28,7 +28,7 @@ Group-sparse regression arises in numerous settings in modern data analytic work
 
 The `grpsel` package provides a simple set of functions for handling grouped selection in R. The two main functions provided by the package are `grpsel()` and `cv.grpsel()`, responsible for model fitting and cross-validation, respectively.
 
-The `grpsel()` function provides a convenient way of performing group subset selection over the regularisation surface. To demonstrate this functionality, let's simulate some grouped data.
+The `grpsel()` function provides a convenient way of performing group subset selection for a path of $\lambda$. To demonstrate this functionality, let's simulate some grouped data.
 
 ```{r}
 set.seed(123)
@@ -98,7 +98,7 @@ The cross-validation results are easily visualised using the `plot()` function.
 plot(cvfit)
 ```
 
-The plot above shows the cross-validated loss (square or logistic) as a function of the number of selected groups for the best cross-validated value of $\gamma$. Plots for other values of $\gamma$ can be produced using the `gamma` argument of `plot()`. From the plot, it is clear that the minimum error is attained when two groups are selected, which so happens to be the truth.
+The plot above shows the cross-validated loss (square or logistic) as a function of the number of selected groups for the best cross-validated value of $\gamma$. Plots for other values of $\gamma$ can be produced using the `gamma` argument of `plot()`. From the plot, it is clear that the minimum loss is attained when two groups are selected, which so happens to be the truth.
 
 The `coef()` and `predict()` functions applied to the output of `cv.grpsel()` return results corresponding to the values of $\lambda$ and $\gamma$ that minimise the cross-validated mean square error.
 
