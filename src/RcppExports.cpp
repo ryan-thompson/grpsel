@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // fitsurface
 Rcpp::List fitsurface(const arma::mat& x, const arma::vec& y, const arma::field<arma::uvec>& groups, const bool& run_ls, const arma::mat& pen_fact, arma::field<arma::vec> lambda, const arma::vec& gamma, const unsigned& shrinkage, const double& alpha, const arma::uword& pmax, const arma::uword& gmax, const bool& active_set, const unsigned& active_set_count, const bool& sort, const unsigned& screen, const double& eps, const unsigned& max_cd_iter, const unsigned& max_ls_iter, const arma::vec& lips_const, const unsigned& loss_fun);
 RcppExport SEXP _grpsel_fitsurface(SEXP xSEXP, SEXP ySEXP, SEXP groupsSEXP, SEXP run_lsSEXP, SEXP pen_factSEXP, SEXP lambdaSEXP, SEXP gammaSEXP, SEXP shrinkageSEXP, SEXP alphaSEXP, SEXP pmaxSEXP, SEXP gmaxSEXP, SEXP active_setSEXP, SEXP active_set_countSEXP, SEXP sortSEXP, SEXP screenSEXP, SEXP epsSEXP, SEXP max_cd_iterSEXP, SEXP max_ls_iterSEXP, SEXP lips_constSEXP, SEXP loss_funSEXP) {

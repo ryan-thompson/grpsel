@@ -5,9 +5,15 @@
 // Triage by loss function
 
 void ls::run(fit& fit, par& par, cd& cd) {
-  if ((par.loss_fun == 1) & par.orthogonal) ls::update_square_orthogonal(fit, par, cd);
-  else if ((par.loss_fun == 1) & !par.orthogonal) ls::update_square(fit, par, cd);
-  else ls::update_logistic(fit, par, cd);
+  if (par.loss_fun == 1) {
+    if (par.orthogonal) {
+      ls::update_square_orthogonal(fit, par, cd);
+    } else {
+      ls::update_square(fit, par, cd);
+    }
+  } else {
+    ls::update_logistic(fit, par, cd);
+  }
 }
 
 // Local search update for square loss with orthogonal groups

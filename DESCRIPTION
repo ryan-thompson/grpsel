@@ -1,7 +1,7 @@
 Package: grpsel
 Type: Package
 Title: Group Subset Selection
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: person("Ryan", "Thompson",  email = "ryan.thompson@monash.edu", role = c("aut", "cre"), 
     comment = c(ORCID = "0000-0002-9002-0448"))
 Description: Provides tools for sparse regression modelling with grouped predictors using the group 
