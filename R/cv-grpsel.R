@@ -134,7 +134,7 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
     cv <- lapply(1:nfold, cvf)
   } else {
     parallel::clusterCall(cluster, \() library(grpsel))
-    cv <- parallel::clusterApply(cluster, x = 1:nfold, fun = cvf)
+    cv <- parallel::clusterApply(cluster, 1:nfold, cvf)
   }
   cv <- lapply(1:ngamma, \(i) t(simplify2array(lapply(cv, `[[`, i))))
 
