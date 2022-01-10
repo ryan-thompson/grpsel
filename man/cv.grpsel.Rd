@@ -14,7 +14,6 @@ cv.grpsel(
   gamma = NULL,
   nfold = 10,
   folds = NULL,
-  interpolate = TRUE,
   cv.loss = NULL,
   cluster = NULL,
   ...
@@ -45,9 +44,6 @@ should contain a vector for each value of \code{gamma}}
 \item{folds}{an optional vector of length \code{nrow(x)} with the ith entry identifying the fold
 that the ith observation belongs to}
 
-\item{interpolate}{a logical indicating whether to interpolate the \code{lambda} sequence for
-the cross-validation fits; see details below}
-
 \item{cv.loss}{an optional cross-validation loss-function to use; should accept a vector of
 predicted values and a vector of actual values}
 
@@ -75,10 +71,7 @@ penalty and then cross-validates this surface.
 }
 \details{
 When \code{loss='logistic'} stratified cross-validation is used to balance
-the folds. When fitting to the cross-validation folds, \code{interpolate=TRUE} cross-validates
-the midpoints between consecutive \code{lambda} values rather than the original \code{lambda}
-sequence. This new sequence retains the same set of solutions on the full data, but often leads
-to superior cross-validation performance.
+the folds.
 }
 \examples{
 # Grouped data

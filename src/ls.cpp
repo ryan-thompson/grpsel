@@ -334,7 +334,7 @@ void ls::update_logistic(fit& fit, par& par, cd& cd) {
           arma::vec pi = arma::clamp(1 / (1 + exb), 1e-15, 1 - 1e-15);
           double beta_l2norm = arma::norm(beta, 2);
           double obj = - arma::dot(fit.y, arma::log(pi)) -
-            arma::dot(1 - fit.y,  arma::log(1 - pi)) +
+            arma::dot(1 - fit.y, arma::log(1 - pi)) +
             lambda + gamma1 * beta_l2norm + gamma2 * beta_l2norm * beta_l2norm;
           if (obj < best_obj) {
             best_obj = obj;

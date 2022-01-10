@@ -20,8 +20,6 @@
 #' @param nfold the number of cross-validation folds
 #' @param folds an optional vector of length \code{nrow(x)} with the ith entry identifying the fold
 #' that the ith observation belongs to
-#' @param interpolate a logical indicating whether to interpolate the \code{lambda} sequence for
-#' the cross-validation fits; see details below
 #' @param cv.loss an optional cross-validation loss-function to use; should accept a vector of
 #' predicted values and a vector of actual values
 #' @param cluster an optional cluster for running cross-validation in parallel; must be set up using
@@ -29,10 +27,7 @@
 #' @param ... any other arguments for \code{grpsel()}
 #'
 #' @details When \code{loss='logistic'} stratified cross-validation is used to balance
-#' the folds. When fitting to the cross-validation folds, \code{interpolate=TRUE} cross-validates
-#' the midpoints between consecutive \code{lambda} values rather than the original \code{lambda}
-#' sequence. This new sequence retains the same set of solutions on the full data, but often leads
-#' to superior cross-validation performance.
+#' the folds.
 #'
 #' @return An object of class \code{cv.grpsel}; a list with the following components:
 #' \item{cv.mean}{a list of vectors containing cross-validation means per value of \code{lambda};
@@ -53,7 +48,7 @@
 cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
                penalty = c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge'),
                loss = c('square', 'logistic'), lambda = NULL, gamma = NULL, nfold = 10,
-               folds = NULL, interpolate = TRUE, cv.loss = NULL, cluster = NULL, ...) {
+               folds = NULL, cv.loss = NULL, cluster = NULL, ...) {
 
   penalty <- match.arg(penalty)
   loss <- match.arg(loss)
@@ -98,19 +93,8 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
       cv.loss <- \(xb, y) 0.5 * mean((y - xb) ^ 2)
     } else if (loss == 'logistic') {
       cv.loss <- \(xb, y) {
-        pi <- pmax(1e-15, pmin(1 - 1e-15, 1 / (1 + exp(- xb))))
+        pi <- pmax(1e-5, pmin(1 - 1e-5, 1 / (1 + exp(- xb))))
         - mean(y * log(pi) + (1 - y) * log(1 - pi))
-      }
-    }
-  }
-
-  # If lambda was computed, use midpoints between consecutive lambdas in cross-validation
-  lambda.cv <- lambda
-  if (interpolate & lambda.compute) {
-    for (i in 1:ngamma) {
-      if (length(lambda[[i]]) > 2) {
-        lambda.cv[[i]][2:(nlambda[i] - 1)] <-
-          lambda[[i]][- c(1, nlambda[i])] + diff(lambda[[i]][- 1]) / 2
       }
     }
   }
@@ -122,8 +106,7 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
     x.valid <- x[fold.ind, , drop = FALSE]
     y.train <- y[- fold.ind, , drop = FALSE]
     y.valid <- y[fold.ind, , drop = FALSE]
-    fit.fold <- grpsel(x.train, y.train, group, penalty, loss, lambda = lambda.cv, gamma = gamma,
-                       ...)
+    fit.fold <- grpsel(x.train, y.train, group, penalty, loss, lambda = lambda, gamma = gamma, ...)
     cv <- list()
     for (i in 1:ngamma) {
       cv[[i]] <- apply(predict(fit.fold, x.valid, gamma = gamma[i]), 2, cv.loss, y.valid)
