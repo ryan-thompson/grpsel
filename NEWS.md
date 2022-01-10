@@ -1,3 +1,7 @@
+# grpsel 1.2.0 (2022-01-10)
+* Improved default argument options
+* Minor code enhancements
+
 # grpsel 1.1.1 (2021-07-09)
 * Minor bug fix
 

@@ -277,7 +277,7 @@ test_that('number of predictors does not exceed pmax', {
   fit <- grpsel(x, y, group, loss = 'square', eps = 1e-15, pmax = 5)
   beta <- coef(fit)[, ncol(coef(fit))]
   sparsity <- sum(beta[- 1] != 0)
-  expect_equal(sparsity, 4)
+  expect_lte(sparsity, 5)
 })
 
 test_that('number of groups does not exceed gmax', {
@@ -289,7 +289,7 @@ test_that('number of groups does not exceed gmax', {
   beta <- coef(fit)[, ncol(coef(fit))]
   group.sparsity <- sum(vapply(unique(group), \(k) norm(beta[- 1][which(group == k)], '2'),
                                numeric(1)) != 0)
-  expect_equal(group.sparsity, 2)
+  expect_lte(group.sparsity, 2)
 })
 
 test_that('number of ridge solutions is ngamma', {
@@ -354,4 +354,46 @@ test_that('number of group lasso solutions is ngamma', {
                 lasso.factor = c(0, rep(1, 9)), eps = 1e-15)
   beta <- coef(fit)
   expect_equal(ncol(beta), 5)
+})
+
+test_that('local search improves on coordinate descent for logistic loss', {
+  set.seed(123)
+  n <- 100
+  p <- 50
+  group <- rep(1:25, each = 2)
+  x <- matrix(rnorm(n * p), n, p) + 2 * matrix(rnorm(n), n, p)
+  y <- rbinom(n, 1, 1 / (1 + exp(- rowSums(x[, 1:10]))))
+  fit.ls <- grpsel(x, y, group, loss = 'logistic', ls = T)
+  fit.cd <- grpsel(x, y, group, loss = 'logistic', ls = F)
+  loss.ls <- fit.ls$loss[[1]][which(fit.ls$np[[1]] %in% fit.cd$np[[1]])]
+  loss.cd <- fit.cd$loss[[1]][which(fit.cd$np[[1]] %in% fit.ls$np[[1]])]
+  expect_true(sum(loss.ls) < sum(loss.cd))
+})
+
+test_that('local search improves on coordinate descent for square loss', {
+  set.seed(123)
+  n <- 100
+  p <- 50
+  group <- rep(1:25, each = 2)
+  x <- matrix(rnorm(n * p), n, p) + 2 * matrix(rnorm(n), n, p)
+  y <- rnorm(n, rowSums(x[, 1:10]))
+  fit.ls <- grpsel(x, y, group, loss = 'square', ls = T)
+  fit.cd <- grpsel(x, y, group, loss = 'square', ls = F)
+  loss.ls <- fit.ls$loss[[1]][which(fit.ls$np[[1]] %in% fit.cd$np[[1]])]
+  loss.cd <- fit.cd$loss[[1]][which(fit.cd$np[[1]] %in% fit.ls$np[[1]])]
+  expect_true(sum(loss.ls) < sum(loss.cd))
+})
+
+test_that('local search improves on coordinate descent for square loss without orthogonalisation', {
+  set.seed(123)
+  n <- 100
+  p <- 50
+  group <- rep(1:25, each = 2)
+  x <- matrix(rnorm(n * p), n, p) + 2 * matrix(rnorm(n), n, p)
+  y <- rnorm(n, rowSums(x[, 1:10]))
+  fit.ls <- grpsel(x, y, group, loss = 'square', ls = T, orthogonalise = F)
+  fit.cd <- grpsel(x, y, group, loss = 'square', ls = F, orthogonalise = F)
+  loss.ls <- fit.ls$loss[[1]][which(fit.ls$np[[1]] %in% fit.cd$np[[1]])]
+  loss.cd <- fit.cd$loss[[1]][which(fit.cd$np[[1]] %in% fit.ls$np[[1]])]
+  expect_true(sum(loss.ls) < sum(loss.cd))
 })

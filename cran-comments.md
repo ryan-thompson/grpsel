@@ -1,10 +1,6 @@
-This submission is to fix a UBSAN related issue.
-
----
-
 ## Test environments
-* ubuntu 20.04, R 4.1.0
-* win-builder (devel and release)
+* ubuntu 20.04, R 4.1.2
+* win-builder (release and devel)
 
 ## R CMD check results
 0 errors | 0 warnings | 1 note

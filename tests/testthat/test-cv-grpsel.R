@@ -18,12 +18,12 @@ test_that('cross-validation leads to the correct subset under square loss', {
   set.seed(123)
   group <- rep(1:5, each = 2)
   x <- matrix(rnorm(100 * 10), 100, 10)
-  y <- rowSums(x[, which(group %in% 1)]) + rnorm(100)
+  y <- rowSums(x[, which(group %in% 1:2)]) + rnorm(100)
   fit <- cv.grpsel(x, y, group, loss = 'square', eps = 1e-15)
   beta <- as.numeric(coef(fit))
   beta.target <- rep(0, 11)
-  beta.target[c(1, which(group %in% 1) + 1)] <- as.numeric(glm(y ~ x[, which(group %in% 1)],
-                                                               family = 'gaussian')$coef)
+  beta.target[c(1, which(group %in% 1:2) + 1)] <- as.numeric(glm(y ~ x[, which(group %in% 1:2)],
+                                                                 family = 'gaussian')$coef)
   expect_equal(beta, beta.target)
 })
 
@@ -31,12 +31,12 @@ test_that('cross-validation leads to the correct subset under logistic loss', {
   set.seed(123)
   group <- rep(1:5, each = 2)
   x <- matrix(rnorm(100 * 10), 100, 10)
-  y <- rbinom(100, 1, 1 / (1 + exp(- rowSums(x[, which(group %in% 1)]))))
+  y <- rbinom(100, 1, 1 / (1 + exp(- rowSums(x[, which(group %in% 1:2)]))))
   fit <- cv.grpsel(x, y, group, loss = 'logistic', eps = 1e-15)
   beta <- as.numeric(coef(fit))
   beta.target <- rep(0, 11)
-  beta.target[c(1, which(group %in% 1) + 1)] <- as.numeric(glm(y ~ x[, which(group %in% 1)],
-                                                               family = 'binomial')$coef)
+  beta.target[c(1, which(group %in% 1:2) + 1)] <- as.numeric(glm(y ~ x[, which(group %in% 1:2)],
+                                                                 family = 'binomial')$coef)
   expect_equal(beta, beta.target)
 })
 
@@ -44,13 +44,13 @@ test_that('cross-validation works when folds are manually supplied', {
   set.seed(123)
   group <- rep(1:5, each = 2)
   x <- matrix(rnorm(100 * 10), 100, 10)
-  y <- rowSums(x[, which(group %in% 1)]) + rnorm(100)
-  folds <- sample(2, 100, T)
+  y <- rowSums(x[, which(group %in% 1:2)]) + rnorm(100)
+  folds <- sample(5, 100, T)
   fit <- cv.grpsel(x, y, group, loss = 'square', eps = 1e-15, folds = folds)
   beta <- as.numeric(coef(fit))
   beta.target <- rep(0, 11)
-  beta.target[c(1, which(group %in% 1) + 1)] <- as.numeric(glm(y ~ x[, which(group %in% 1)],
-                                                               family = 'gaussian')$coef)
+  beta.target[c(1, which(group %in% 1:2) + 1)] <- as.numeric(glm(y ~ x[, which(group %in% 1:2)],
+                                                                 family = 'gaussian')$coef)
   expect_equal(beta, beta.target)
 })
 
@@ -83,42 +83,6 @@ test_that('plot function returns a plot', {
   fit <- cv.grpsel(x, y, eps = 1e-15)
   p <- plot(fit)
   expect_s3_class(p, 'ggplot')
-})
-
-test_that('local search improves on coordinate descent for logistic loss', {
-  set.seed(123)
-  n <- 100
-  p <- 50
-  group <- rep(1:25, each = 2)
-  x <- matrix(rnorm(n * p), n, p) + matrix(rnorm(n), n, p)
-  y <- rbinom(n, 1, 1 / (1 + exp(- rowSums(x[, 1:4]))))
-  fit <- cv.grpsel(x, y, group, loss = 'logistic', ls = T)
-  beta <- coef(fit)
-  expect_true(identical(which(beta[- 1] != 0), 1:4))
-})
-
-test_that('local search improves on coordinate descent for square loss', {
-  set.seed(123)
-  n <- 100
-  p <- 50
-  group <- rep(1:25, each = 2)
-  x <- matrix(rnorm(n * p), n, p) + matrix(rnorm(n), n, p)
-  y <- rnorm(n, rowSums(x[, 1:4]))
-  fit <- cv.grpsel(x, y, group, loss = 'square', ls = T)
-  beta <- coef(fit)
-  expect_true(identical(which(beta[- 1] != 0), 1:4))
-})
-
-test_that('local search improves on coordinate descent for square loss with orthogonalisation', {
-  set.seed(123)
-  n <- 100
-  p <- 50
-  group <- rep(1:25, each = 2)
-  x <- matrix(rnorm(n * p), n, p) + matrix(rnorm(n), n, p)
-  y <- rnorm(n, rowSums(x[, 1:4]))
-  fit <- cv.grpsel(x, y, group, loss = 'square', ls = T, orthogonalise = F)
-  beta <- coef(fit)
-  expect_true(identical(which(beta[- 1] != 0), 1:4))
 })
 
 test_that('sequential and parallel cross-validation produce same output', {
