@@ -22,7 +22,7 @@ grpsel(
   subset.factor = NULL,
   lasso.factor = NULL,
   ridge.factor = NULL,
-  alpha = 0.99,
+  alpha = 0.9,
   eps = 1e-04,
   max.cd.iter = 10000,
   max.ls.iter = 100,

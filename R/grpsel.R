@@ -93,7 +93,7 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
             loss = c('square', 'logistic'), ls = FALSE, nlambda = 100, ngamma = 10, gamma.max = 100,
             gamma.min = 1e-4, lambda = NULL, gamma = NULL, pmax = ncol(x),
             gmax = length(unique(group)), subset.factor = NULL, lasso.factor = NULL,
-            ridge.factor = NULL, alpha = 0.99, eps = 1e-4, max.cd.iter = 1e4, max.ls.iter = 100,
+            ridge.factor = NULL, alpha = 0.9, eps = 1e-4, max.cd.iter = 1e4, max.ls.iter = 100,
             active.set = TRUE, active.set.count = 3, sort = TRUE, screen = 500,
             orthogonalise = TRUE, warn = TRUE) {
 
