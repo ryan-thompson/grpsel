@@ -16,18 +16,6 @@ plot(fit)
 coef(fit)
 predict(fit, newx)
 
-# Group subset selection with group lasso shrinkage
-fit <- cv.grpsel(x, y, group, penalty = 'grSubset+grLasso')
-plot(fit)
-coef(fit)
-predict(fit, newx)
-
-# Group subset selection with ridge shrinkage
-fit <- cv.grpsel(x, y, group, penalty = 'grSubset+Ridge')
-plot(fit)
-coef(fit)
-predict(fit, newx)
-
 # Parallel cross-validation
 cl <- parallel::makeCluster(2)
 fit <- cv.grpsel(x, y, group, cluster = cl)

@@ -15,7 +15,7 @@ public:
   arma::field<arma::vec> lambda;
   const arma::vec gamma;
   const unsigned shrinkage;
-  const double alpha;
+  const double lambda_step;
   const arma::uword pmax, gmax;
   const arma::vec lips_const;
   const unsigned loss_fun;
@@ -31,11 +31,11 @@ public:
 
   surface(const arma::mat& x, const arma::vec& y, const arma::field<arma::uvec>& groups,
           const arma::mat& pen_fact, arma::field<arma::vec>& lambda, const arma::vec& gamma,
-          const unsigned& shrinkage, const double& alpha, const arma::uword& pmax,
+          const unsigned& shrinkage, const double& lambda_step, const arma::uword& pmax,
           const arma::uword& gmax, const arma::vec& lips_const, const unsigned& loss_fun) :
           x(x), y(y), groups(groups), pen_fact(pen_fact), lambda(lambda), gamma(gamma),
-          shrinkage(shrinkage), alpha(alpha), pmax(pmax), gmax(gmax), lips_const(lips_const),
-          loss_fun(loss_fun) {
+          shrinkage(shrinkage), lambda_step(lambda_step), pmax(pmax), gmax(gmax),
+          lips_const(lips_const), loss_fun(loss_fun) {
     p = x.n_cols;
     g = groups.size();
     r = y;

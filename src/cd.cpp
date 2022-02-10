@@ -137,7 +137,7 @@ void cd::run(fit& fit, par& par) {
           (par.lips_const(k) + 2 * par.gamma2 * par.pen_fact(k, 2)));
       if (lambda_tmp > par.lambda) par.lambda = lambda_tmp;
     }
-  par.lambda = par.alpha * par.lambda;
+  par.lambda = par.lambda_step * par.lambda;
   }
 
   // Sort coordinates

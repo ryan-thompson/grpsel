@@ -264,7 +264,7 @@ void ls::update_logistic(fit& fit, par& par, cd& cd) {
       arma::uvec group_k = par.groups(k);
       arma::vec beta_k = fit.beta(group_k);
       double beta_k_l2norm = arma::norm(beta_k, 2);
-      arma::vec pi_k = arma::clamp(1 / (1 + fit.exb), 1e-15, 1 - 1e-15);
+      arma::vec pi_k = arma::clamp(1 / (1 + fit.exb), 1e-5, 1 - 1e-5);
       double obj_k = - arma::dot(fit.y, arma::log(pi_k)) -
         arma::dot(1 - fit.y,  arma::log(1 - pi_k)) +
         lambda_k + gamma1_k * beta_k_l2norm + gamma2_k * beta_k_l2norm * beta_k_l2norm;
@@ -331,7 +331,7 @@ void ls::update_logistic(fit& fit, par& par, cd& cd) {
         // If minimiser is active, check if it improves on incumbent minimiser
 
         if (isactive) {
-          arma::vec pi = arma::clamp(1 / (1 + exb), 1e-15, 1 - 1e-15);
+          arma::vec pi = arma::clamp(1 / (1 + exb), 1e-5, 1 - 1e-5);
           double beta_l2norm = arma::norm(beta, 2);
           double obj = - arma::dot(fit.y, arma::log(pi)) -
             arma::dot(1 - fit.y, arma::log(1 - pi)) +

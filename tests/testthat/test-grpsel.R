@@ -363,8 +363,8 @@ test_that('local search improves on coordinate descent for logistic loss', {
   group <- rep(1:25, each = 2)
   x <- matrix(rnorm(n * p), n, p) + 2 * matrix(rnorm(n), n, p)
   y <- rbinom(n, 1, 1 / (1 + exp(- rowSums(x[, 1:10]))))
-  fit.ls <- grpsel(x, y, group, loss = 'logistic', ls = T)
-  fit.cd <- grpsel(x, y, group, loss = 'logistic', ls = F)
+  fit.ls <- grpsel(x, y, group, loss = 'logistic', local.search = T)
+  fit.cd <- grpsel(x, y, group, loss = 'logistic', local.search = F)
   loss.ls <- fit.ls$loss[[1]][which(fit.ls$np[[1]] %in% fit.cd$np[[1]])]
   loss.cd <- fit.cd$loss[[1]][which(fit.cd$np[[1]] %in% fit.ls$np[[1]])]
   expect_true(sum(loss.ls) < sum(loss.cd))
@@ -377,8 +377,8 @@ test_that('local search improves on coordinate descent for square loss', {
   group <- rep(1:25, each = 2)
   x <- matrix(rnorm(n * p), n, p) + 2 * matrix(rnorm(n), n, p)
   y <- rnorm(n, rowSums(x[, 1:10]))
-  fit.ls <- grpsel(x, y, group, loss = 'square', ls = T)
-  fit.cd <- grpsel(x, y, group, loss = 'square', ls = F)
+  fit.ls <- grpsel(x, y, group, loss = 'square', local.search = T)
+  fit.cd <- grpsel(x, y, group, loss = 'square', local.search = F)
   loss.ls <- fit.ls$loss[[1]][which(fit.ls$np[[1]] %in% fit.cd$np[[1]])]
   loss.cd <- fit.cd$loss[[1]][which(fit.cd$np[[1]] %in% fit.ls$np[[1]])]
   expect_true(sum(loss.ls) < sum(loss.cd))
@@ -391,8 +391,8 @@ test_that('local search improves on coordinate descent for square loss without o
   group <- rep(1:25, each = 2)
   x <- matrix(rnorm(n * p), n, p) + 2 * matrix(rnorm(n), n, p)
   y <- rnorm(n, rowSums(x[, 1:10]))
-  fit.ls <- grpsel(x, y, group, loss = 'square', ls = T, orthogonalise = F)
-  fit.cd <- grpsel(x, y, group, loss = 'square', ls = F, orthogonalise = F)
+  fit.ls <- grpsel(x, y, group, loss = 'square', local.search = T, orthogonalise = F)
+  fit.cd <- grpsel(x, y, group, loss = 'square', local.search = F, orthogonalise = F)
   loss.ls <- fit.ls$loss[[1]][which(fit.ls$np[[1]] %in% fit.cd$np[[1]])]
   loss.cd <- fit.cd$loss[[1]][which(fit.cd$np[[1]] %in% fit.ls$np[[1]])]
   expect_true(sum(loss.ls) < sum(loss.cd))

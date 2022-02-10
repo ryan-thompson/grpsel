@@ -10,7 +10,7 @@ grpsel(
   group = seq_len(ncol(x)),
   penalty = c("grSubset", "grSubset+grLasso", "grSubset+Ridge"),
   loss = c("square", "logistic"),
-  ls = FALSE,
+  local.search = FALSE,
   nlambda = 100,
   ngamma = 10,
   gamma.max = 100,
@@ -22,7 +22,7 @@ grpsel(
   subset.factor = NULL,
   lasso.factor = NULL,
   ridge.factor = NULL,
-  alpha = 0.9,
+  lambda.step = 0.9,
   eps = 1e-04,
   max.cd.iter = 10000,
   max.ls.iter = 100,
@@ -49,8 +49,8 @@ the predictors that belong to the kth group (useful for overlapping groups)}
 \item{loss}{the type of loss function to use; 'square' for linear regression or 'logistic' for
 logistic regression}
 
-\item{ls}{a logical indicating whether to perform local search after coordinate descent;
-typically leads to higher quality solutions}
+\item{local.search}{a logical indicating whether to perform local search after coordinate
+descent; typically leads to higher quality solutions}
 
 \item{nlambda}{the number of group subset regularisation parameters to evaluate when
 \code{lambda} is computed automatically; may evaluate fewer parameters if \code{pmax} or
@@ -86,8 +86,8 @@ square root of the group sizes by default}
 \item{ridge.factor}{a vector of penalty factors applied to the ridge penalty; equal to a
 vector of ones by default}
 
-\item{alpha}{the step size taken when computing \code{lambda} from the data; should be a value
-strictly between 0 and 1; larger values typically lead to a finer grid of subset sizes}
+\item{lambda.step}{the step size taken when computing \code{lambda} from the data; should be a
+value strictly between 0 and 1; larger values typically lead to a finer grid of subset sizes}
 
 \item{eps}{the convergence tolerance; convergence is declared when the relative maximum
 difference in consecutive coefficients is less than \code{eps}}

@@ -16,8 +16,8 @@
 #' 'grSubset+Ridge'
 #' @param loss the type of loss function to use; 'square' for linear regression or 'logistic' for
 #' logistic regression
-#' @param ls a logical indicating whether to perform local search after coordinate descent;
-#' typically leads to higher quality solutions
+#' @param local.search a logical indicating whether to perform local search after coordinate
+#' descent; typically leads to higher quality solutions
 #' @param nlambda the number of group subset regularisation parameters to evaluate when
 #' \code{lambda} is computed automatically; may evaluate fewer parameters if \code{pmax} or
 #' \code{gmax} is reached first
@@ -41,8 +41,8 @@
 #' square root of the group sizes by default
 #' @param ridge.factor a vector of penalty factors applied to the ridge penalty; equal to a
 #' vector of ones by default
-#' @param alpha the step size taken when computing \code{lambda} from the data; should be a value
-#' strictly between 0 and 1; larger values typically lead to a finer grid of subset sizes
+#' @param lambda.step the step size taken when computing \code{lambda} from the data; should be a
+#' value strictly between 0 and 1; larger values typically lead to a finer grid of subset sizes
 #' @param eps the convergence tolerance; convergence is declared when the relative maximum
 #' difference in consecutive coefficients is less than \code{eps}
 #' @param max.cd.iter the maximum number of coordinate descent iterations allowed per value of
@@ -90,11 +90,11 @@
 
 grpsel <- \(x, y, group = seq_len(ncol(x)),
             penalty = c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge'),
-            loss = c('square', 'logistic'), ls = FALSE, nlambda = 100, ngamma = 10, gamma.max = 100,
-            gamma.min = 1e-4, lambda = NULL, gamma = NULL, pmax = ncol(x),
+            loss = c('square', 'logistic'), local.search = FALSE, nlambda = 100, ngamma = 10,
+            gamma.max = 100, gamma.min = 1e-4, lambda = NULL, gamma = NULL, pmax = ncol(x),
             gmax = length(unique(group)), subset.factor = NULL, lasso.factor = NULL,
-            ridge.factor = NULL, alpha = 0.9, eps = 1e-4, max.cd.iter = 1e4, max.ls.iter = 100,
-            active.set = TRUE, active.set.count = 3, sort = TRUE, screen = 500,
+            ridge.factor = NULL, lambda.step = 0.9, eps = 1e-4, max.cd.iter = 1e4,
+            max.ls.iter = 100, active.set = TRUE, active.set.count = 3, sort = TRUE, screen = 500,
             orthogonalise = TRUE, warn = TRUE) {
 
   penalty <- match.arg(penalty)
@@ -140,7 +140,7 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
   if (!is.null(ridge.factor) & length(ridge.factor) != g) {
     stop('length of ridge.factor must equal number of groups')
   }
-  if (alpha >= 1 | alpha <= 0) stop('alpha must be between 0 and 1 (strictly)')
+  if (lambda.step >= 1 | lambda.step <= 0) stop('lambda.step must be between 0 and 1 (strictly)')
 
   # Expand predictor matrix if groups overlap
   if (group.list) {
@@ -220,9 +220,9 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
   if (is.null(lambda)) lambda <- replicate(ngamma, rep(- 1, nlambda), simplify = FALSE)
 
   # Fit regularisation surface
-  result <- fitsurface(x, y, groups0, ls, penalty.factor, lambda, gamma,
+  result <- fitsurface(x, y, groups0, local.search, penalty.factor, lambda, gamma,
                        which(penalty == c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge')),
-                       alpha, pmax, gmax, active.set, active.set.count, sort, screen, eps,
+                       lambda.step, pmax, gmax, active.set, active.set.count, sort, screen, eps,
                        max.cd.iter, max.ls.iter, lips.const,
                        which(loss == c('square', 'logistic')))
 

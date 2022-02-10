@@ -86,25 +86,35 @@ coef(fit, lambda = 0.05, gamma = 0.1)
 
 Similar arguments exist for `predict()`.
 
-In practice, $\lambda$ and $\gamma$ usually need to be cross-validated. The `cv.grpsel()` function provides a convenient way to perform group subset selection with cross-validation.
+In practice, $\lambda$ and $\gamma$ usually need to be cross-validated. The `cv.grpsel()` function provides a convenient way to perform group subset selection with cross-validation. Let's try this function out on a more realistically sized dataset.
 
 ```{r}
-cvfit <- cv.grpsel(x, y, group, penalty = 'grSubset+Ridge', nfold = 10) # 10-fold cross-validation
+n <- 100
+p <- 500
+g <- 250
+group <- rep(1:g, each = p / g)
+beta <- numeric(p)
+beta[which(group %in% 1:2)] <- 1
+x <- matrix(rnorm(n * p), n, p)
+y <- x %*% beta + rnorm(n)
+
+fit <- cv.grpsel(x, y, group, penalty = 'grSubset+Ridge', nfold = 10) # 10-fold cross-validation
 ```
 
 The cross-validation results are easily visualised using the `plot()` function.
 
 ```{r}
-plot(cvfit)
+plot(fit)
 ```
 
-The plot above shows the cross-validated loss (square or logistic) as a function of the number of selected groups for the best cross-validated value of $\gamma$. Plots for other values of $\gamma$ can be produced using the `gamma` argument of `plot()`. From the plot, it is clear that the minimum loss is attained when two groups are selected, which so happens to be the truth.
+The plot above shows the cross-validated loss (square or logistic) as a function of the number of selected groups for the best cross-validated value of $\gamma$. Plots for other values of $\gamma$ can be produced using the `gamma` argument of `plot()`.
 
 The `coef()` and `predict()` functions applied to the output of `cv.grpsel()` return results corresponding to the values of $\lambda$ and $\gamma$ that minimise the cross-validated mean square error.
 
 ```{r}
-coef(cvfit)
-predict(cvfit, x.new)
+head(coef(fit), n = 10) # Only print the first few coefficients
+x.new <- matrix(rnorm(10 * p), 10, p)
+predict(fit, x.new)
 ```
 
 Note that `grpsel()` does not need to be run after using `cv.grpsel()`, as the latter calls the former and saves the result as `cvfit$fit`.
@@ -112,10 +122,11 @@ Note that `grpsel()` does not need to be run after using `cv.grpsel()`, as the l
 Finally, to perform a logistic regression fit, simply set `loss='logistic'`.
 
 ```{r}
-y <- pmax(sign(y), 0)
+y[y >= 0] <- 1
+y[y < 0] <- 0
 
 fit <- cv.grpsel(x, y, group, loss = 'logistic')
-coef(fit)
+head(coef(fit), n = 10)
 ```
 
 ## Overlapping groups
@@ -140,23 +151,11 @@ Under the hood, the overlapping groups are handled using a latent coefficient ap
 
 ## Algorithms
 
-The primary algorithm driving `grpsel` is coordinate descent. Sometimes when the groups are strongly correlated the estimate produced by coordinate descent can be improved using local search, a custom algorithm that runs on top of coordinate descent. To use local search, set `ls=T`.
+The primary algorithm driving `grpsel` is coordinate descent. Sometimes when the groups are strongly correlated the estimate produced by coordinate descent can be improved using local search, a custom algorithm that runs on top of coordinate descent. To use local search, set `local.search=T`.
 
 ```{r}
-p <- 10
-group <- rep(1:g, each = p / g)
-Sigma <- 0.9 ^ t(sapply(1:p, function(i, j) abs(i - j), 1:p))
-x <- matrix(rnorm(n * p), n, p)
-x <- t(chol(Sigma) %*% t(x))
-beta[which(group %in% 1:2)] <- 1 # First two groups are nonzero
-y <- x %*% beta + rnorm(n)
-fit <- cv.grpsel(x, y, group)
-coef(fit)
-fit <- cv.grpsel(x, y, group, ls = T)
-coef(fit)
+fit <- cv.grpsel(x, y, group, local.search = T)
 ```
-
-In this high-correlation example, the correct groups are not selected without local search.
 
 ## Demonstrations
 
@@ -176,8 +175,6 @@ beta <- matrix(0, p, m)
 beta[1:5, ] <- 1
 x <- matrix(rnorm(n * p), n, p)
 y <- x %*% beta + matrix(rnorm(n * m), n, m)
-x <- scale(x)
-y <- scale(y)
 
 y <- matrix(y, ncol = 1)
 x <- diag(m) %x% x
@@ -206,7 +203,7 @@ To fit this model we will use natural cubic splines with five basis functions. T
 
 ```{r}
 n <- 100
-p <- 10
+p <- 50
 x <- matrix(runif(n * p), n, p)
 y <- sinpi(2 * x[, 1]) + cospi(2 * x[, 2]) + rnorm(n, sd = 0.1)
 df <- 5
@@ -253,7 +250,7 @@ In this example, the main effects $x_1$, $x_2$, and $x_3$ are nonzero, as well a
 
 ```{r}
 n <- 100
-p <- 10
+p <- 50
 x <- matrix(rnorm(n * p), n, p)
 y <- x[, 1] + x[, 2] + x[, 3] + x[, 1] * x[, 2] + rnorm(n)
 

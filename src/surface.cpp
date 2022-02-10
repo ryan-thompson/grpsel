@@ -23,7 +23,7 @@ void surface::run(cd& cd, ls& ls) {
 
     // Loop over lambda values
 
-    double alpha_j = 1.000001; // Ensures first solution contains only unpenalised groups
+    double lambda_step_j = 1.000001; // Ensures first solution contains only unpenalised groups
     bool compute_lambda = lambda(i)(0) < 0;
     arma::uword j;
     arma::uword nlambda_i = nlambda(i);
@@ -37,7 +37,7 @@ void surface::run(cd& cd, ls& ls) {
       // Run coordinate descent for fixed values of lambda/gamma
 
       double lambda0 = lambda(i)(j);
-      par par(groups, alpha_j, lambda0, gamma1, gamma2, pen_fact, lips_const, loss_fun);
+      par par(groups, lambda_step_j, lambda0, gamma1, gamma2, pen_fact, lips_const, loss_fun);
       cd.run(fit, par);
 
       // // Exit if any NaNs (e.g., constant response or predictors)
@@ -71,7 +71,7 @@ void surface::run(cd& cd, ls& ls) {
       iter_ls(i)(j) = ls.iter;
       loss(i)(j) = loss_(fit, par);
 
-      alpha_j = alpha;
+      lambda_step_j = lambda_step;
 
       // Exit if pmax or gmax reached
 
