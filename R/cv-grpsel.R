@@ -14,8 +14,8 @@
 #' 'grSubset+Ridge'
 #' @param loss the type of loss function to use; 'square' for linear regression or 'logistic' for
 #' logistic regression
-#' @param lambda an optional list of decreasing sequences of group subset parameters; the list
-#' should contain a vector for each value of \code{gamma}
+#' @param lambda an optional list of decreasing sequences of group subset selection parameters; the
+#' list should contain a vector for each value of \code{gamma}
 #' @param gamma an optional decreasing sequence of group lasso or ridge parameters
 #' @param nfold the number of cross-validation folds
 #' @param folds an optional vector of length \code{nrow(x)} with the ith entry identifying the fold
@@ -24,10 +24,15 @@
 #' predicted values and a vector of actual values
 #' @param cluster an optional cluster for running cross-validation in parallel; must be set up using
 #' \code{parallel::makeCluster}; each fold is evaluated on a different node of the cluster
+#' @param interpolate a logical indicating whether to interpolate the \code{lambda} sequence for
+#' the cross-validation fits; see details below
 #' @param ... any other arguments for \code{grpsel()}
 #'
 #' @details When \code{loss='logistic'} stratified cross-validation is used to balance
-#' the folds.
+#' the folds. When fitting to the cross-validation folds, \code{interpolate=TRUE} cross-validates
+#' the midpoints between consecutive \code{lambda} values rather than the original \code{lambda}
+#' sequence. This new sequence retains the same set of solutions on the full data, but often leads
+#' to superior cross-validation performance.
 #'
 #' @return An object of class \code{cv.grpsel}; a list with the following components:
 #' \item{cv.mean}{a list of vectors containing cross-validation means per value of \code{lambda};
@@ -48,7 +53,7 @@
 cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
                penalty = c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge'),
                loss = c('square', 'logistic'), lambda = NULL, gamma = NULL, nfold = 10,
-               folds = NULL, cv.loss = NULL, cluster = NULL, ...) {
+               folds = NULL, cv.loss = NULL, cluster = NULL, interpolate = TRUE, ...) {
 
   penalty <- match.arg(penalty)
   loss <- match.arg(loss)
@@ -65,9 +70,6 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
     stop('length of folds must equal number of rows in x')
   }
 
-  # Preliminaries
-  n <- nrow(x)
-
   # Set up for cross-validation
   lambda.compute <- is.null(lambda)
   fit <- grpsel(x, y, group, penalty, loss, lambda = lambda, gamma = gamma, ...)
@@ -77,9 +79,9 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
   ngamma <- length(fit$gamma)
   if (is.null(folds)) {
     if (loss == 'square') {
-      folds <- sample(rep_len(1:nfold, n))
+      folds <- sample(rep_len(1:nfold, nrow(x)))
     } else if (loss == 'logistic') {
-      folds <- integer(n)
+      folds <- integer(nrow(x))
       folds[y == 0] <- sample(rep_len(1:nfold, sum(y == 0)))
       folds[y == 1] <- sample(rep_len(1:nfold, sum(y == 1)))
     }
@@ -99,6 +101,17 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
     }
   }
 
+  # If lambda was computed, use midpoints between consecutive lambdas in cross-validation
+  lambda.cv <- lambda
+  if (interpolate & lambda.compute) {
+    for (i in 1:ngamma) {
+      if (length(lambda[[i]]) > 2) {
+        lambda.cv[[i]][2:(nlambda[i] - 1)] <-
+          lambda[[i]][- c(1, nlambda[i])] + diff(lambda[[i]][- 1]) / 2
+      }
+    }
+  }
+
   # Loop over folds
   cvf <- \(fold) {
     fold.ind <- which(folds == fold)
@@ -106,7 +119,8 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
     x.valid <- x[fold.ind, , drop = FALSE]
     y.train <- y[- fold.ind, , drop = FALSE]
     y.valid <- y[fold.ind, , drop = FALSE]
-    fit.fold <- grpsel(x.train, y.train, group, penalty, loss, lambda = lambda, gamma = gamma, ...)
+    fit.fold <- grpsel(x.train, y.train, group, penalty, loss, lambda = lambda.cv, gamma = gamma,
+                       ...)
     cv <- list()
     for (i in 1:ngamma) {
       cv[[i]] <- apply(predict(fit.fold, x.valid, gamma = gamma[i]), 2, cv.loss, y.valid)

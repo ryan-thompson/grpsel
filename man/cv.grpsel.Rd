@@ -16,6 +16,7 @@ cv.grpsel(
   folds = NULL,
   cv.loss = NULL,
   cluster = NULL,
+  interpolate = TRUE,
   ...
 )
 }
@@ -34,8 +35,8 @@ the predictors that belong to the kth group (useful for overlapping groups)}
 \item{loss}{the type of loss function to use; 'square' for linear regression or 'logistic' for
 logistic regression}
 
-\item{lambda}{an optional list of decreasing sequences of group subset parameters; the list
-should contain a vector for each value of \code{gamma}}
+\item{lambda}{an optional list of decreasing sequences of group subset selection parameters; the
+list should contain a vector for each value of \code{gamma}}
 
 \item{gamma}{an optional decreasing sequence of group lasso or ridge parameters}
 
@@ -49,6 +50,9 @@ predicted values and a vector of actual values}
 
 \item{cluster}{an optional cluster for running cross-validation in parallel; must be set up using
 \code{parallel::makeCluster}; each fold is evaluated on a different node of the cluster}
+
+\item{interpolate}{a logical indicating whether to interpolate the \code{lambda} sequence for
+the cross-validation fits; see details below}
 
 \item{...}{any other arguments for \code{grpsel()}}
 }
@@ -71,7 +75,10 @@ penalty and then cross-validates this surface.
 }
 \details{
 When \code{loss='logistic'} stratified cross-validation is used to balance
-the folds.
+the folds. When fitting to the cross-validation folds, \code{interpolate=TRUE} cross-validates
+the midpoints between consecutive \code{lambda} values rather than the original \code{lambda}
+sequence. This new sequence retains the same set of solutions on the full data, but often leads
+to superior cross-validation performance.
 }
 \examples{
 # Grouped data
@@ -83,7 +90,7 @@ group <- rep(1:g, each = p / g)
 beta <- numeric(p)
 beta[which(group \%in\% 1:2)] <- 1
 x <- matrix(rnorm(n * p), n, p)
-y <- x \%*\% beta + rnorm(n)
+y <- rnorm(n, x \%*\% beta)
 newx <- matrix(rnorm(p), ncol = p)
 
 # Group subset selection
