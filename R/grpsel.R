@@ -18,31 +18,31 @@
 #' logistic regression
 #' @param local.search a logical indicating whether to perform local search after coordinate
 #' descent; typically leads to higher quality solutions
-#' @param nlambda the number of group subset regularisation parameters to evaluate when
-#' \code{lambda} is computed automatically; may evaluate fewer parameters if \code{pmax} or
-#' \code{gmax} is reached first
-#' @param ngamma the number of group lasso or ridge regularisation parameters to evaluate when
-#' \code{gamma} is computed automatically
+#' @param orthogonalise a logical indicating whether to orthogonalise within groups
+#' @param nlambda the number of group subset selection parameters to evaluate when  \code{lambda} is
+#' computed automatically; may evaluate fewer parameters if \code{pmax} or \code{gmax} is reached
+#' first
+#' @param lambda.step the step size taken when computing \code{lambda} from the data; should be a
+#' value strictly between 0 and 1; larger values typically lead to a finer grid of subset sizes
+#' @param lambda an optional list of decreasing sequences of group subset selection parameters; the
+#' list should contain a vector for each value of \code{gamma}
+#' @param lambda.factor a vector of penalty factors applied to the group subset selection penalty;
+#' equal to the group sizes by default
+#' @param ngamma the number of group lasso or ridge parameters to evaluate when \code{gamma} is
+#' computed automatically
 #' @param gamma.max the maximum value for \code{gamma} when \code{penalty='grSubset+Ridge'}; when
 #' \code{penalty='grSubset+grLasso'} \code{gamma.max} is computed automatically from the data
 #' @param gamma.min the minimum value for \code{gamma} when \code{penalty='grSubset+Ridge'} and the
 #' minimum value for \code{gamma} as a fraction of \code{gamma.max} when
 #' \code{penalty='grSubset+grLasso'}
-#' @param lambda an optional list of decreasing sequences of group subset parameters; the list
-#' should contain a vector for each value of \code{gamma}
 #' @param gamma an optional decreasing sequence of group lasso or ridge parameters
+#' @param gamma.factor a vector of penalty factors applied to the shrinkage penalty; by default,
+#' equal to the square root of the group sizes when \code{penalty='grSubset+grLasso'} or a vector of
+#' ones when \code{penalty='grSubset+Ridge'}
 #' @param pmax the maximum number of predictors ever allowed to be active; ignored if \code{lambda}
 #' is supplied
 #' @param gmax the maximum number of groups ever allowed to be active; ignored if \code{lambda} is
 #' supplied
-#' @param subset.factor a vector of penalty factors applied to the group subset penalty; equal to
-#' the group sizes by default
-#' @param lasso.factor a vector of penalty factors applied to the group lasso penalty; equal to the
-#' square root of the group sizes by default
-#' @param ridge.factor a vector of penalty factors applied to the ridge penalty; equal to a
-#' vector of ones by default
-#' @param lambda.step the step size taken when computing \code{lambda} from the data; should be a
-#' value strictly between 0 and 1; larger values typically lead to a finer grid of subset sizes
 #' @param eps the convergence tolerance; convergence is declared when the relative maximum
 #' difference in consecutive coefficients is less than \code{eps}
 #' @param max.cd.iter the maximum number of coordinate descent iterations allowed per value of
@@ -57,12 +57,11 @@
 #' descent; required for gradient screening; typically leads to higher quality solutions
 #' @param screen the number of groups to keep after gradient screening; smaller values typically
 #' lower the run time
-#' @param orthogonalise a logical indicating whether to orthogonalise within groups
 #' @param warn a logical indicating whether to print a warning if the algorithms fail to converge
 #'
-#' @details For linear regression (loss='square') the response and predictors are centred about
-#' zero and scaled to unit l2-norm. For logistic regression (loss='logistic') only the predictors
-#' are centred and scaled and an intercept is fit during the course of the algorithm.
+#' @details For linear regression (\code{loss='square'}) the response and predictors are centred
+#' about zero and scaled to unit l2-norm. For logistic regression (\code{loss='logistic'}) only the
+#' predictors are centred and scaled and an intercept is fit during the course of the algorithm.
 #'
 #' @return An object of class \code{grpsel}; a list with the following components:
 #' \item{beta}{a list of matrices whose columns contain fitted coefficients for a given value of
@@ -90,12 +89,11 @@
 
 grpsel <- \(x, y, group = seq_len(ncol(x)),
             penalty = c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge'),
-            loss = c('square', 'logistic'), local.search = FALSE, nlambda = 100, ngamma = 10,
-            gamma.max = 100, gamma.min = 1e-4, lambda = NULL, gamma = NULL, pmax = ncol(x),
-            gmax = length(unique(group)), subset.factor = NULL, lasso.factor = NULL,
-            ridge.factor = NULL, lambda.step = 0.9, eps = 1e-4, max.cd.iter = 1e4,
-            max.ls.iter = 100, active.set = TRUE, active.set.count = 3, sort = TRUE, screen = 500,
-            orthogonalise = TRUE, warn = TRUE) {
+            loss = c('square', 'logistic'), local.search = FALSE, orthogonalise = FALSE,
+            nlambda = 100, lambda.step = 0.99, lambda = NULL,  lambda.factor = NULL, ngamma = 10,
+            gamma.max = 100, gamma.min = 1e-4, gamma = NULL, gamma.factor = NULL, pmax = ncol(x),
+            gmax = length(unique(group)), eps = 1e-4, max.cd.iter = 1e4, max.ls.iter = 100,
+            active.set = TRUE, active.set.count = 3, sort = TRUE, screen = 500, warn = TRUE) {
 
   penalty <- match.arg(penalty)
   loss <- match.arg(loss)
@@ -110,12 +108,12 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
   if (loss == 'logistic' & !all(y %in% c(0, 1))) stop('y must take values in {0,1}')
 
   # Check arguments are valid
-  if (nrow(x) != nrow(y)) stop('x and y must have the same number of observations')
-  group.list <- is.list(group)
-  if (group.list & length(unique(unlist(group))) != ncol(x)) {
+  if (nrow(x) != nrow(y)) stop('x and y must have same number of observations')
+  overlap <- is.list(group)
+  if (overlap & length(unique(unlist(group))) != ncol(x)) {
     stop('each column of x must be assigned to a group')
   }
-  if (!group.list & length(group) != ncol(x)) {
+  if (!overlap & length(group) != ncol(x)) {
     stop('each column of x must be assigned to a group')
   }
   if (nlambda < 1) stop('nlambda must be at least one')
@@ -127,29 +125,26 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
       stop('lambda must be a list with length ngamma')
     }
     if (!is.null(gamma) & length(lambda) != length(gamma)) {
-      stop('lambda must be a list with the same length as gamma')
+      stop('lambda must be a list with same length as gamma')
     }
   }
-  if (group.list) g <- length(group) else g <- length(unique(group))
-  if (!is.null(subset.factor) & length(subset.factor) != g) {
-    stop('length of subset.factor must equal number of groups')
+  if (overlap) g <- length(group) else g <- length(unique(group))
+  if (!is.null(lambda.factor) & length(lambda.factor) != g) {
+    stop('length of lambda.factor must equal number of groups')
   }
-  if (!is.null(lasso.factor) & length(lasso.factor) != g) {
-    stop('length of lasso.factor must equal number of groups')
-  }
-  if (!is.null(ridge.factor) & length(ridge.factor) != g) {
-    stop('length of ridge.factor must equal number of groups')
+  if (!is.null(gamma.factor) & length(gamma.factor) != g) {
+    stop('length of gamma.factor must equal number of groups')
   }
   if (lambda.step >= 1 | lambda.step <= 0) stop('lambda.step must be between 0 and 1 (strictly)')
 
-  # Expand predictor matrix if groups overlap
-  if (group.list) {
-    coef.id <- sort(unlist(group))
-    x <- x[, coef.id]
-    group <- rep(seq_along(group), times = lengths(group))[order(unlist(group))]
+  # Expand predictor matrix if groups overlap and orthogonality is required
+  if (overlap & orthogonalise) {
+      coef.id <- sort(unlist(group))
+      x <- x[, coef.id]
+      group <- rep(seq_along(group), times = lengths(group))[order(unlist(group))]
   }
 
-  # Preliminaries
+  # Cap pmax if necessary
   n <- nrow(x)
   p <- ncol(x)
   pmax <- min(pmax, n - 1, p)
@@ -163,26 +158,39 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
   y.s <- attributes(y)$`scaled:scale`
 
   # Set up groups
-  groups <- stats::aggregate(1:p ~ group, FUN = c, simplify = FALSE)[, 2]
-  groups0 <- lapply(groups, '-', 1) # For C++
-  gsize <- vapply(groups, length, integer(1))
-  if (is.null(subset.factor)) subset.factor <- gsize
-  if (is.null(lasso.factor)) lasso.factor <- sqrt(gsize)
-  if (is.null(ridge.factor)) ridge.factor <- rep(1, g)
-  penalty.factor <- cbind(subset.factor, lasso.factor, ridge.factor)
+  if (!is.list(group)) group <- stats::aggregate(1:p ~ group, FUN = c, simplify = FALSE)[, 2]
+  pk <- vapply(group, length, integer(1))
+  if (orthogonalise & any(pk > n)) {
+    stop('maximum group size cannot exceed sample size; set orthogonalisation=F')
+  }
+  group0 <- lapply(group, '-', 1) # For C++
+  if (!overlap | (overlap & orthogonalise)) {
+    group.ind <- group
+    group0.ind <- group0
+  } else {
+    group.ind <- stats::aggregate(1:sum(pk) ~ rep(1:g, pk), FUN = c, simplify = FALSE)[, 2]
+    group0.ind <- lapply(group.ind, '-', 1) # For C++
+  }
+
+  # Set up penalty factors
+  if (is.null(lambda.factor)) lambda.factor <- pk
+  if (is.null(gamma.factor)) {
+    if (penalty == 'grSubset+grLasso') gamma.factor <- sqrt(pk) else gamma.factor <- rep(1, g)
+  }
+  penalty.factor <- cbind(lambda.factor, gamma.factor, gamma.factor)
 
   # Orthogonalise groups
   if (orthogonalise) {
-    x <- orthogonalise(x, groups0)
+    x <- orthogonalise(x, group0)
     z <- x$z
     x <- x$x
   }
 
-  # Compute the Lipschitz constants
-  if (orthogonalise | all(gsize == 1)) {
+  # Compute Lipschitz constants
+  if (orthogonalise | all(pk == 1)) {
     lips.const <- rep(1, g)
   } else {
-    lips.const <- lipschitz(x, groups0)
+    lips.const <- lipschitz(x, group0)
   }
   if (loss == 'logistic') lips.const <- lips.const / 4
 
@@ -192,7 +200,7 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
       ngamma <- 1
       gamma <- 0
     } else if (penalty == 'grSubset+grLasso') {
-      ind <- unlist(groups[which(lasso.factor == 0)])
+      ind <- unlist(group[gamma.factor == 0])
       if (is.null(ind)) {
         if (loss == 'square') {
           r <- y
@@ -207,8 +215,8 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
         }
       }
       xr <- crossprod(x, r)
-      gamma.max <- max(vapply(which(lasso.factor != 0), \(l) sqrt(sum(xr[groups[[l]]] ^ 2)) /
-                                lasso.factor[l], numeric(1)))
+      gamma.max <- max(vapply(which(gamma.factor != 0), \(l) sqrt(sum(xr[group[[l]]] ^ 2)) /
+                                gamma.factor[l], numeric(1)))
       gamma <- exp(seq(log(gamma.max), log(gamma.max * gamma.min), length.out = ngamma))
       gamma[1] <- gamma[1] * 1.00001 # Ensures first solution is zero when lambda=0
     } else if (penalty == 'grSubset+Ridge') {
@@ -220,14 +228,21 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
   if (is.null(lambda)) lambda <- replicate(ngamma, rep(- 1, nlambda), simplify = FALSE)
 
   # Fit regularisation surface
-  result <- fitsurface(x, y, groups0, local.search, penalty.factor, lambda, gamma,
+  result <- fitsurface(x, y, group0, group0.ind, local.search, penalty.factor, lambda, gamma,
                        which(penalty == c('grSubset', 'grSubset+grLasso', 'grSubset+Ridge')),
                        lambda.step, pmax, gmax, active.set, active.set.count, sort, screen, eps,
                        max.cd.iter, max.ls.iter, lips.const,
                        which(loss == c('square', 'logistic')))
 
   # Unwind orthogonalisation
-  if (orthogonalise) result$beta <- lapply(result$beta, unorthogonalise, groups = groups0, z = z)
+  if (orthogonalise) result$beta <- lapply(result$beta, unorthogonalise, groups = group0, z = z)
+
+  # Aggregate coefficients if groups overlap
+  if (overlap & !orthogonalise) {
+    result$beta <- lapply(result$beta,
+                          \(beta) stats::aggregate(beta ~ unlist(group), FUN = sum)[, - 1])
+    result$beta <- lapply(result$beta, \(beta) {colnames(beta) <- NULL; as.matrix(beta)})
+  }
 
   # Unwind standardisation
   result$beta <- mapply(unstandardise, beta = result$beta, intercept = result$intercept,
@@ -236,7 +251,7 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
   result$intercept <- NULL
 
   # Aggregate coefficients if groups overlap
-  if (group.list) {
+  if (overlap & orthogonalise) {
     result$beta <- lapply(result$beta,
                           \(beta) stats::aggregate(beta ~ c(0, coef.id), FUN = sum)[, - 1])
     result$beta <- lapply(result$beta, \(beta) {colnames(beta) <- NULL; as.matrix(beta)})
@@ -360,7 +375,7 @@ plot.grpsel <- \(x, gamma = 0, ...) {
   beta <- beta[- 1, , drop = FALSE]
   df <- data.frame(beta = as.vector(beta), predictor = as.factor(seq_along(beta[, 1])),
                    ng = rep(x$ng[[index]], each = nrow(beta)))
-  df <- df[which(df$beta != 0), ]
+  df <- df[df$beta != 0, ]
   p <- ggplot2::ggplot(df, ggplot2::aes_string('ng', 'beta', col = 'predictor')) +
     ggplot2::geom_point() +
     ggplot2::xlab('number of groups')

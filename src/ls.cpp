@@ -39,7 +39,7 @@ void ls::update_square_orthogonal(fit& fit, par& par, cd& cd) {
       double gamma1_k = par.gamma1 * par.pen_fact(k, 1);
       double gamma2_k = par.gamma2 * par.pen_fact(k, 2);
       arma::uvec group_k = par.groups(k);
-      arma::vec beta_k = fit.beta(group_k);
+      arma::vec beta_k = fit.beta(par.groups_ind(k));
       double beta_k_l2norm = arma::norm(beta_k, 2);
       double obj_k = 0.5 * arma::dot(fit.r, fit.r) +
         lambda_k + gamma1_k * beta_k_l2norm + gamma2_k * beta_k_l2norm * beta_k_l2norm;
@@ -93,7 +93,7 @@ void ls::update_square_orthogonal(fit& fit, par& par, cd& cd) {
       if (best_obj < obj_k) {
         fit.beta(group_k).zeros();
         fit.active(k) = false;
-        fit.beta(par.groups(best_s)) = best_beta;
+        fit.beta(par.groups_ind(best_s)) = best_beta;
         fit.active(best_s) = true;
         fit.r = best_r;
         for (arma::uword j = 0; j < fit.p; j++) fit.grad(j) = - arma::dot(fit.r, fit.x.unsafe_col(j));
@@ -137,7 +137,7 @@ void ls::update_square(fit& fit, par& par, cd& cd) {
       double gamma1_k = par.gamma1 * par.pen_fact(k, 1);
       double gamma2_k = par.gamma2 * par.pen_fact(k, 2);
       arma::uvec group_k = par.groups(k);
-      arma::vec beta_k = fit.beta(group_k);
+      arma::vec beta_k = fit.beta(par.groups_ind(k));
       double beta_k_l2norm = arma::norm(beta_k, 2);
       double obj_k = 0.5 * arma::dot(fit.r, fit.r) +
         lambda_k + gamma1_k * beta_k_l2norm + gamma2_k * beta_k_l2norm * beta_k_l2norm;
@@ -218,7 +218,7 @@ void ls::update_square(fit& fit, par& par, cd& cd) {
       if (best_obj < obj_k) {
         fit.beta(group_k).zeros();
         fit.active(k) = false;
-        fit.beta(par.groups(best_s)) = best_beta;
+        fit.beta(par.groups_ind(best_s)) = best_beta;
         fit.active(best_s) = true;
         fit.r = best_r;
         for (arma::uword j = 0; j < fit.p; j++) fit.grad(j) = - arma::dot(fit.r, fit.x.unsafe_col(j));
@@ -262,7 +262,7 @@ void ls::update_logistic(fit& fit, par& par, cd& cd) {
       double gamma1_k = par.gamma1 * par.pen_fact(k, 1);
       double gamma2_k = par.gamma2 * par.pen_fact(k, 2);
       arma::uvec group_k = par.groups(k);
-      arma::vec beta_k = fit.beta(group_k);
+      arma::vec beta_k = fit.beta(par.groups_ind(k));
       double beta_k_l2norm = arma::norm(beta_k, 2);
       arma::vec pi_k = arma::clamp(1 / (1 + fit.exb), 1e-5, 1 - 1e-5);
       double obj_k = - arma::dot(fit.y, arma::log(pi_k)) -
@@ -352,7 +352,7 @@ void ls::update_logistic(fit& fit, par& par, cd& cd) {
       if (best_obj < obj_k) {
         fit.beta(group_k).zeros();
         fit.active(k) = false;
-        fit.beta(par.groups(best_s)) = best_beta;
+        fit.beta(par.groups_ind(best_s)) = best_beta;
         fit.active(best_s) = true;
         fit.exb = best_exb;
         fit.r = best_r;

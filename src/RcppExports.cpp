@@ -12,14 +12,15 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // fitsurface
-Rcpp::List fitsurface(const arma::mat& x, const arma::vec& y, const arma::field<arma::uvec>& groups, const bool& run_ls, const arma::mat& pen_fact, arma::field<arma::vec> lambda, const arma::vec& gamma, const unsigned& shrinkage, const double& lambda_step, const arma::uword& pmax, const arma::uword& gmax, const bool& active_set, const unsigned& active_set_count, const bool& sort, const unsigned& screen, const double& eps, const unsigned& max_cd_iter, const unsigned& max_ls_iter, const arma::vec& lips_const, const unsigned& loss_fun);
-RcppExport SEXP _grpsel_fitsurface(SEXP xSEXP, SEXP ySEXP, SEXP groupsSEXP, SEXP run_lsSEXP, SEXP pen_factSEXP, SEXP lambdaSEXP, SEXP gammaSEXP, SEXP shrinkageSEXP, SEXP lambda_stepSEXP, SEXP pmaxSEXP, SEXP gmaxSEXP, SEXP active_setSEXP, SEXP active_set_countSEXP, SEXP sortSEXP, SEXP screenSEXP, SEXP epsSEXP, SEXP max_cd_iterSEXP, SEXP max_ls_iterSEXP, SEXP lips_constSEXP, SEXP loss_funSEXP) {
+Rcpp::List fitsurface(const arma::mat& x, const arma::vec& y, const arma::field<arma::uvec>& groups, const arma::field<arma::uvec>& groups_ind, const bool& run_ls, const arma::mat& pen_fact, arma::field<arma::vec> lambda, const arma::vec& gamma, const unsigned& shrinkage, const double& lambda_step, const arma::uword& pmax, const arma::uword& gmax, const bool& active_set, const unsigned& active_set_count, const bool& sort, const unsigned& screen, const double& eps, const unsigned& max_cd_iter, const unsigned& max_ls_iter, const arma::vec& lips_const, const unsigned& loss_fun);
+RcppExport SEXP _grpsel_fitsurface(SEXP xSEXP, SEXP ySEXP, SEXP groupsSEXP, SEXP groups_indSEXP, SEXP run_lsSEXP, SEXP pen_factSEXP, SEXP lambdaSEXP, SEXP gammaSEXP, SEXP shrinkageSEXP, SEXP lambda_stepSEXP, SEXP pmaxSEXP, SEXP gmaxSEXP, SEXP active_setSEXP, SEXP active_set_countSEXP, SEXP sortSEXP, SEXP screenSEXP, SEXP epsSEXP, SEXP max_cd_iterSEXP, SEXP max_ls_iterSEXP, SEXP lips_constSEXP, SEXP loss_funSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const arma::field<arma::uvec>& >::type groups(groupsSEXP);
+    Rcpp::traits::input_parameter< const arma::field<arma::uvec>& >::type groups_ind(groups_indSEXP);
     Rcpp::traits::input_parameter< const bool& >::type run_ls(run_lsSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type pen_fact(pen_factSEXP);
     Rcpp::traits::input_parameter< arma::field<arma::vec> >::type lambda(lambdaSEXP);
@@ -37,7 +38,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const unsigned& >::type max_ls_iter(max_ls_iterSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type lips_const(lips_constSEXP);
     Rcpp::traits::input_parameter< const unsigned& >::type loss_fun(loss_funSEXP);
-    rcpp_result_gen = Rcpp::wrap(fitsurface(x, y, groups, run_ls, pen_fact, lambda, gamma, shrinkage, lambda_step, pmax, gmax, active_set, active_set_count, sort, screen, eps, max_cd_iter, max_ls_iter, lips_const, loss_fun));
+    rcpp_result_gen = Rcpp::wrap(fitsurface(x, y, groups, groups_ind, run_ls, pen_fact, lambda, gamma, shrinkage, lambda_step, pmax, gmax, active_set, active_set_count, sort, screen, eps, max_cd_iter, max_ls_iter, lips_const, loss_fun));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -126,7 +127,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_grpsel_fitsurface", (DL_FUNC) &_grpsel_fitsurface, 20},
+    {"_grpsel_fitsurface", (DL_FUNC) &_grpsel_fitsurface, 21},
     {"_grpsel_lipschitz", (DL_FUNC) &_grpsel_lipschitz, 2},
     {"_grpsel_orthogonalise", (DL_FUNC) &_grpsel_orthogonalise, 2},
     {"_grpsel_unorthogonalise", (DL_FUNC) &_grpsel_unorthogonalise, 3},

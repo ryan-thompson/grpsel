@@ -10,7 +10,7 @@ class surface {
 public:
   const arma::mat x;
   const arma::vec y;
-  const arma::field<arma::uvec> groups;
+  const arma::field<arma::uvec> groups, groups_ind;
   const arma::mat pen_fact;
   arma::field<arma::vec> lambda;
   const arma::vec gamma;
@@ -19,7 +19,7 @@ public:
   const arma::uword pmax, gmax;
   const arma::vec lips_const;
   const unsigned loss_fun;
-  unsigned p, g;
+  unsigned p, g, sumpk = 0;
   arma::vec exb, r, grad;
   double int0 = 0;
   double null_dev = 0;
@@ -30,14 +30,16 @@ public:
   arma::field<arma::uvec> np, ng, iter_cd, iter_ls;
 
   surface(const arma::mat& x, const arma::vec& y, const arma::field<arma::uvec>& groups,
-          const arma::mat& pen_fact, arma::field<arma::vec>& lambda, const arma::vec& gamma,
-          const unsigned& shrinkage, const double& lambda_step, const arma::uword& pmax,
-          const arma::uword& gmax, const arma::vec& lips_const, const unsigned& loss_fun) :
-          x(x), y(y), groups(groups), pen_fact(pen_fact), lambda(lambda), gamma(gamma),
+          const arma::field<arma::uvec>& groups_ind, const arma::mat& pen_fact,
+          arma::field<arma::vec>& lambda, const arma::vec& gamma, const unsigned& shrinkage,
+          const double& lambda_step, const arma::uword& pmax, const arma::uword& gmax,
+          const arma::vec& lips_const, const unsigned& loss_fun) : x(x), y(y), groups(groups),
+          groups_ind(groups_ind), pen_fact(pen_fact), lambda(lambda), gamma(gamma),
           shrinkage(shrinkage), lambda_step(lambda_step), pmax(pmax), gmax(gmax),
           lips_const(lips_const), loss_fun(loss_fun) {
     p = x.n_cols;
     g = groups.size();
+    for (arma::uword k = 0; k < g; k++) sumpk += groups(k).size();
     r = y;
     if (loss_fun == 2) {
       double ybar = arma::mean(y);
@@ -63,14 +65,13 @@ public:
       unsigned nlambda_i = lambda(i).size();
       nlambda(i) = nlambda_i;
       intercept(i) = arma::vec(nlambda_i, arma::fill::zeros);
-      beta(i) = arma::mat(p, nlambda_i, arma::fill::zeros);
+      beta(i) = arma::mat(sumpk, nlambda_i, arma::fill::zeros);
       np(i) = arma::uvec(nlambda_i, arma::fill::zeros);
       ng(i) = arma::uvec(nlambda_i, arma::fill::zeros);
       iter_cd(i) = arma::uvec(nlambda_i, arma::fill::zeros);
       iter_ls(i) = arma::uvec(nlambda_i, arma::fill::zeros);
       loss(i) = arma::vec(nlambda_i, arma::fill::zeros);
     }
-
   };
 
   void run(cd& cd, ls& ls);

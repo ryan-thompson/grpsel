@@ -23,11 +23,12 @@ void cd::update_square(fit& fit, par& par, const arma::uvec& indices) {
     double gamma2 = par.gamma2 * par.pen_fact(k, 2);
     double c = par.lips_const(k);
     arma::uvec group = par.groups(k);
+    arma::uvec group_ind = par.groups_ind(k);
 
     // Compute new estimate
 
     for (arma::uword j : group) fit.grad(j) = - arma::dot(fit.r, fit.x.unsafe_col(j));
-    arma::vec beta = fit.beta(group);
+    arma::vec beta = fit.beta(group_ind);
     arma::vec beta_update = beta - fit.grad(group) / c;
     threshold(beta_update, isactive, lambda, gamma1, gamma2, c);
 
@@ -37,7 +38,7 @@ void cd::update_square(fit& fit, par& par, const arma::uvec& indices) {
 
       arma::vec delta = beta_update - beta;
       fit.r -= fit.x.cols(group) * delta;
-      fit.beta(group) = beta_update;
+      fit.beta(group_ind) = beta_update;
 
       double delta_infnorm = arma::norm(delta, "inf");
       if (delta_infnorm > max_delta) max_delta = delta_infnorm;
@@ -77,11 +78,12 @@ void cd::update_logistic(fit& fit, par& par, const arma::uvec& indices) {
     double gamma2 = par.gamma2 * par.pen_fact(k, 2);
     double c = par.lips_const(k);
     arma::uvec group = par.groups(k);
+    arma::uvec group_ind = par.groups_ind(k);
 
     // Compute new estimate
 
     for (arma::uword j : group) fit.grad(j) = - arma::dot(fit.r, fit.x.unsafe_col(j));
-    arma::vec beta = fit.beta(group);
+    arma::vec beta = fit.beta(group_ind);
     arma::vec beta_update = beta - fit.grad(group) / c;
     threshold(beta_update, isactive, lambda, gamma1, gamma2, c);
 
@@ -92,7 +94,7 @@ void cd::update_logistic(fit& fit, par& par, const arma::uvec& indices) {
       arma::vec delta = beta_update - beta;
       fit.exb %= arma::exp(- fit.x.cols(group) * delta);
       fit.r = fit.y - 1 / (1 + fit.exb);
-      fit.beta(group) = beta_update;
+      fit.beta(group_ind) = beta_update;
 
       double delta_infnorm = arma::norm(delta, "inf");
       if (delta_infnorm > max_delta) max_delta = delta_infnorm;

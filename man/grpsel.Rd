@@ -11,18 +11,18 @@ grpsel(
   penalty = c("grSubset", "grSubset+grLasso", "grSubset+Ridge"),
   loss = c("square", "logistic"),
   local.search = FALSE,
+  orthogonalise = FALSE,
   nlambda = 100,
+  lambda.step = 0.99,
+  lambda = NULL,
+  lambda.factor = NULL,
   ngamma = 10,
   gamma.max = 100,
   gamma.min = 1e-04,
-  lambda = NULL,
   gamma = NULL,
+  gamma.factor = NULL,
   pmax = ncol(x),
   gmax = length(unique(group)),
-  subset.factor = NULL,
-  lasso.factor = NULL,
-  ridge.factor = NULL,
-  lambda.step = 0.9,
   eps = 1e-04,
   max.cd.iter = 10000,
   max.ls.iter = 100,
@@ -30,7 +30,6 @@ grpsel(
   active.set.count = 3,
   sort = TRUE,
   screen = 500,
-  orthogonalise = TRUE,
   warn = TRUE
 )
 }
@@ -52,12 +51,23 @@ logistic regression}
 \item{local.search}{a logical indicating whether to perform local search after coordinate
 descent; typically leads to higher quality solutions}
 
-\item{nlambda}{the number of group subset regularisation parameters to evaluate when
-\code{lambda} is computed automatically; may evaluate fewer parameters if \code{pmax} or
-\code{gmax} is reached first}
+\item{orthogonalise}{a logical indicating whether to orthogonalise within groups}
 
-\item{ngamma}{the number of group lasso or ridge regularisation parameters to evaluate when
-\code{gamma} is computed automatically}
+\item{nlambda}{the number of group subset selection parameters to evaluate when  \code{lambda} is
+computed automatically; may evaluate fewer parameters if \code{pmax} or \code{gmax} is reached
+first}
+
+\item{lambda.step}{the step size taken when computing \code{lambda} from the data; should be a
+value strictly between 0 and 1; larger values typically lead to a finer grid of subset sizes}
+
+\item{lambda}{an optional list of decreasing sequences of group subset selection parameters; the
+list should contain a vector for each value of \code{gamma}}
+
+\item{lambda.factor}{a vector of penalty factors applied to the group subset selection penalty;
+equal to the group sizes by default}
+
+\item{ngamma}{the number of group lasso or ridge parameters to evaluate when \code{gamma} is
+computed automatically}
 
 \item{gamma.max}{the maximum value for \code{gamma} when \code{penalty='grSubset+Ridge'}; when
 \code{penalty='grSubset+grLasso'} \code{gamma.max} is computed automatically from the data}
@@ -66,28 +76,17 @@ descent; typically leads to higher quality solutions}
 minimum value for \code{gamma} as a fraction of \code{gamma.max} when
 \code{penalty='grSubset+grLasso'}}
 
-\item{lambda}{an optional list of decreasing sequences of group subset parameters; the list
-should contain a vector for each value of \code{gamma}}
-
 \item{gamma}{an optional decreasing sequence of group lasso or ridge parameters}
+
+\item{gamma.factor}{a vector of penalty factors applied to the shrinkage penalty; by default,
+equal to the square root of the group sizes when \code{penalty='grSubset+grLasso'} or a vector of
+ones when \code{penalty='grSubset+Ridge'}}
 
 \item{pmax}{the maximum number of predictors ever allowed to be active; ignored if \code{lambda}
 is supplied}
 
 \item{gmax}{the maximum number of groups ever allowed to be active; ignored if \code{lambda} is
 supplied}
-
-\item{subset.factor}{a vector of penalty factors applied to the group subset penalty; equal to
-the group sizes by default}
-
-\item{lasso.factor}{a vector of penalty factors applied to the group lasso penalty; equal to the
-square root of the group sizes by default}
-
-\item{ridge.factor}{a vector of penalty factors applied to the ridge penalty; equal to a
-vector of ones by default}
-
-\item{lambda.step}{the step size taken when computing \code{lambda} from the data; should be a
-value strictly between 0 and 1; larger values typically lead to a finer grid of subset sizes}
 
 \item{eps}{the convergence tolerance; convergence is declared when the relative maximum
 difference in consecutive coefficients is less than \code{eps}}
@@ -109,8 +108,6 @@ descent; required for gradient screening; typically leads to higher quality solu
 
 \item{screen}{the number of groups to keep after gradient screening; smaller values typically
 lower the run time}
-
-\item{orthogonalise}{a logical indicating whether to orthogonalise within groups}
 
 \item{warn}{a logical indicating whether to print a warning if the algorithms fail to converge}
 }
@@ -139,9 +136,9 @@ for shrinkage. The group subset parameter is \code{lambda} and the group lasso/r
 \code{gamma}.
 }
 \details{
-For linear regression (loss='square') the response and predictors are centred about
-zero and scaled to unit l2-norm. For logistic regression (loss='logistic') only the predictors
-are centred and scaled and an intercept is fit during the course of the algorithm.
+For linear regression (\code{loss='square'}) the response and predictors are centred
+about zero and scaled to unit l2-norm. For logistic regression (\code{loss='logistic'}) only the
+predictors are centred and scaled and an intercept is fit during the course of the algorithm.
 }
 \examples{
 # Grouped data
@@ -153,7 +150,7 @@ group <- rep(1:g, each = p / g)
 beta <- numeric(p)
 beta[which(group \%in\% 1:2)] <- 1
 x <- matrix(rnorm(n * p), n, p)
-y <- x \%*\% beta + rnorm(n)
+y <- rnorm(n, x \%*\% beta)
 newx <- matrix(rnorm(p), ncol = p)
 
 # Group subset selection

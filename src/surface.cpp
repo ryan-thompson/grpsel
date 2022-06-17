@@ -27,7 +27,7 @@ void surface::run(cd& cd, ls& ls) {
     bool compute_lambda = lambda(i)(0) < 0;
     arma::uword j;
     arma::uword nlambda_i = nlambda(i);
-    fit fit(x, y, r, grad, exb, int0, p, g);
+    fit fit(x, y, r, grad, exb, int0, p, g, sumpk);
 
     for (j = 0; j < nlambda_i; j++) {
 
@@ -37,7 +37,8 @@ void surface::run(cd& cd, ls& ls) {
       // Run coordinate descent for fixed values of lambda/gamma
 
       double lambda0 = lambda(i)(j);
-      par par(groups, lambda_step_j, lambda0, gamma1, gamma2, pen_fact, lips_const, loss_fun);
+      par par(groups, groups_ind, lambda_step_j, lambda0, gamma1, gamma2, pen_fact, lips_const,
+              loss_fun);
       cd.run(fit, par);
 
       // // Exit if any NaNs (e.g., constant response or predictors)
@@ -53,7 +54,15 @@ void surface::run(cd& cd, ls& ls) {
 
       // Exit if pmax or gmax exceeded
 
-      arma::uword nnz_p = arma::sum(fit.beta != 0);
+      arma::uword nnz_p;
+      if (fit.p == fit.sumpk) {
+        nnz_p = arma::sum(fit.beta != 0);
+      } else {
+        arma::uvec nz = arma::uvec(fit.p, arma::fill::zeros);
+        arma::uvec active_ind = arma::find(fit.active);
+        for (arma::uword k : active_ind) for (arma::uword j : par.groups(k)) nz(j) = true;
+        nnz_p = arma::sum(nz);
+      }
       arma::uword nnz_g = arma::sum(fit.active);
       if (compute_lambda & ((nnz_p > pmax) | (nnz_g > gmax))) {
         j--;
