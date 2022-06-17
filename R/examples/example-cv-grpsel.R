@@ -7,7 +7,7 @@ group <- rep(1:g, each = p / g)
 beta <- numeric(p)
 beta[which(group %in% 1:2)] <- 1
 x <- matrix(rnorm(n * p), n, p)
-y <- x %*% beta + rnorm(n)
+y <- rnorm(n, x %*% beta)
 newx <- matrix(rnorm(p), ncol = p)
 
 # Group subset selection

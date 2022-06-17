@@ -14,29 +14,27 @@ test_that('length of folds must match sample size', {
   expect_error(cv.grpsel(x, y, folds = folds))
 })
 
-test_that('cross-validation leads to the correct subset under square loss', {
+test_that('cross-validation leads to correct subset under square loss', {
   set.seed(123)
   group <- rep(1:5, each = 2)
   x <- matrix(rnorm(100 * 10), 100, 10)
-  y <- rowSums(x[, which(group %in% 1:2)]) + rnorm(100)
-  fit <- cv.grpsel(x, y, group, loss = 'square', eps = 1e-15)
+  y <- rnorm(100, rowSums(x[, which(group %in% 1:2)]))
+  fit <- cv.grpsel(x, y, group, eps = 1e-15)
   beta <- as.numeric(coef(fit))
   beta.target <- rep(0, 11)
-  beta.target[c(1, which(group %in% 1:2) + 1)] <- as.numeric(glm(y ~ x[, which(group %in% 1:2)],
-                                                                 family = 'gaussian')$coef)
+  beta.target[c(T, group %in% 1:2)] <- as.numeric(glm(y ~ x[, group %in% 1:2])$coef)
   expect_equal(beta, beta.target)
 })
 
-test_that('cross-validation leads to the correct subset under logistic loss', {
+test_that('cross-validation leads to correct subset under logistic loss', {
   set.seed(123)
   group <- rep(1:5, each = 2)
   x <- matrix(rnorm(100 * 10), 100, 10)
-  y <- rbinom(100, 1, 1 / (1 + exp(- rowSums(x[, which(group %in% 1:2)]))))
+  y <- rbinom(100, 1, 1 / (1 + exp(- 2 * rowSums(x[, which(group %in% 1:2)]))))
   fit <- cv.grpsel(x, y, group, loss = 'logistic', eps = 1e-15)
   beta <- as.numeric(coef(fit))
   beta.target <- rep(0, 11)
-  beta.target[c(1, which(group %in% 1:2) + 1)] <- as.numeric(glm(y ~ x[, which(group %in% 1:2)],
-                                                                 family = 'binomial')$coef)
+  beta.target[c(T, group %in% 1:2)] <- as.numeric(glm(y ~ x[, group %in% 1:2], 'binomial')$coef)
   expect_equal(beta, beta.target)
 })
 
@@ -44,22 +42,21 @@ test_that('cross-validation works when folds are manually supplied', {
   set.seed(123)
   group <- rep(1:5, each = 2)
   x <- matrix(rnorm(100 * 10), 100, 10)
-  y <- rowSums(x[, which(group %in% 1:2)]) + rnorm(100)
+  y <- rnorm(100, rowSums(x[, which(group %in% 1:2)]))
   folds <- sample(5, 100, T)
-  fit <- cv.grpsel(x, y, group, loss = 'square', eps = 1e-15, folds = folds)
+  fit <- cv.grpsel(x, y, group, eps = 1e-15, folds = folds)
   beta <- as.numeric(coef(fit))
   beta.target <- rep(0, 11)
-  beta.target[c(1, which(group %in% 1:2) + 1)] <- as.numeric(glm(y ~ x[, which(group %in% 1:2)],
-                                                                 family = 'gaussian')$coef)
+  beta.target[c(T, group %in% 1:2)] <- as.numeric(glm(y ~ x[, group %in% 1:2])$coef)
   expect_equal(beta, beta.target)
 })
 
 test_that('coefficients are extracted correctly', {
   set.seed(123)
   x <- matrix(rnorm(100 * 10), 100, 10)
-  y <- rowSums(x) + rnorm(100)
+  y <- rnorm(100, rowSums(x))
   fit <- cv.grpsel(x, y, eps = 1e-15)
-  fit.target <- glm(y ~ x, family = 'gaussian')
+  fit.target <- glm(y ~ x)
   beta <- coef(fit)
   beta.target <- as.matrix(as.numeric(coef(fit.target)))
   expect_equal(beta, beta.target)
@@ -68,9 +65,9 @@ test_that('coefficients are extracted correctly', {
 test_that('predictions are computed correctly', {
   set.seed(123)
   x <- matrix(rnorm(100 * 10), 100, 10)
-  y <- rowSums(x) + rnorm(100)
+  y <- rnorm(100, rowSums(x))
   fit <- cv.grpsel(x, y, eps = 1e-15)
-  fit.target <- glm(y ~ x, family = 'gaussian')
+  fit.target <- glm(y ~ x)
   yhat <- predict(fit, x)
   yhat.target <- as.matrix(as.numeric(predict(fit.target, as.data.frame(x))))
   expect_equal(yhat, yhat.target)
@@ -79,8 +76,8 @@ test_that('predictions are computed correctly', {
 test_that('plot function returns a plot', {
   set.seed(123)
   x <- matrix(rnorm(100 * 10), 100, 10)
-  y <- rowSums(x) + rnorm(100)
-  fit <- cv.grpsel(x, y, eps = 1e-15)
+  y <- rnorm(100)
+  fit <- cv.grpsel(x, y)
   p <- plot(fit)
   expect_s3_class(p, 'ggplot')
 })
@@ -88,11 +85,11 @@ test_that('plot function returns a plot', {
 test_that('sequential and parallel cross-validation produce same output', {
   set.seed(123)
   x <- matrix(rnorm(100 * 10), 100, 10)
-  y <- rowSums(x) + rnorm(100)
+  y <- rnorm(100)
   folds <- rep(1:10, each = 10)
-  fit.seq <- cv.grpsel(x, y, eps = 1e-15, folds = folds)
+  fit.seq <- cv.grpsel(x, y, folds = folds)
   cl <- parallel::makeCluster(2)
-  fit.par <- cv.grpsel(x, y, eps = 1e-15, folds = folds, cluster = cl)
+  fit.par <- cv.grpsel(x, y, folds = folds, cluster = cl)
   parallel::stopCluster(cl)
   expect_equal(fit.seq, fit.par)
 })
