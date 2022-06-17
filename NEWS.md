@@ -1,3 +1,6 @@
+# grpsel 1.3.0 (2022-06-18)
+* Reduced memory footprint for overlapping groups
+
 # grpsel 1.2.0 (2022-01-10)
 * Improved default argument options
 * Minor code enhancements
