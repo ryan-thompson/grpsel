@@ -1,3 +1,6 @@
+# grpsel 1.3.1 (2022-09-06)
+* Updated author information
+
 # grpsel 1.3.0 (2022-06-18)
 * Reduced memory footprint for overlapping groups
 

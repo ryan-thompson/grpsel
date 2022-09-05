@@ -2,12 +2,12 @@ citHeader("To cite grpsel in publications use:")
 
 citEntry(
   entry       = "Article",
-  title       = "Group selection and shrinkage with application to sparse semiparametric modeling",
+  title       = "Group selection and shrinkage: Structured sparsity for semiparametric models",
   author      = personList(as.person("Ryan Thompson"), as.person("Farshid Vahid")),
   journal     = "arXiv:2105.12081",
-  year        = "2021",
+  year        = "2022",
   textVersion =
-  paste("Ryan Thompson, Farshid Vahid (2021).",
-        "Group selection and shrinkage with application to sparse semiparametric modeling",
+  paste("Ryan Thompson, Farshid Vahid (2022).",
+        "Group selection and shrinkage: Structured sparsity for semiparametric models",
         "arXiv:2105.12081")
 )
