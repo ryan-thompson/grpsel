@@ -1,3 +1,8 @@
+# grpsel 1.3.2 (2024-12-28)
+* Updated author information
+* Updated citation information
+* Fixed warning from ggplot2
+
 # grpsel 1.3.1 (2022-09-06)
 * Updated author information
 

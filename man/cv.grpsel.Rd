@@ -105,5 +105,5 @@ fit <- cv.grpsel(x, y, group, cluster = cl)
 parallel::stopCluster(cl)
 }
 \author{
-Ryan Thompson <ryan.thompson@monash.edu>
+Ryan Thompson <ryan.thompson-1@uts.edu.au>
 }

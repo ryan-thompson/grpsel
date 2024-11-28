@@ -22,5 +22,5 @@ A matrix of coefficients.
 Extracts coefficients for specified values of the tuning parameters.
 }
 \author{
-Ryan Thompson <ryan.thompson@monash.edu>
+Ryan Thompson <ryan.thompson-1@uts.edu.au>
 }

@@ -21,5 +21,5 @@ Plot the coefficient profiles from group subset selection for a specified value 
 \code{gamma}.
 }
 \author{
-Ryan Thompson <ryan.thompson@monash.edu>
+Ryan Thompson <ryan.thompson-1@uts.edu.au>
 }

@@ -1,8 +1,8 @@
 Package: grpsel
 Type: Package
 Title: Group Subset Selection
-Version: 1.3.1
-Authors@R: person("Ryan", "Thompson",  email = "ryan.thompson1@unsw.edu.au", role = c("aut", "cre"), 
+Version: 1.3.2
+Authors@R: person("Ryan", "Thompson",  email = "ryan.thompson-1@uts.edu.au", role = c("aut", "cre"), 
     comment = c(ORCID = "0000-0002-9002-0448"))
 Description: Provides tools for sparse regression modelling with grouped predictors using the group 
     subset selection penalty. Uses coordinate descent and local search algorithms to rapidly deliver 
@@ -16,7 +16,7 @@ Encoding: UTF-8
 Depends: R (>= 4.1.0)
 Imports: ggplot2, parallel, Rcpp
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.2
 Suggests: testthat, knitr, rmarkdown
 VignetteBuilder: knitr
 Config/testthat/edition: 3

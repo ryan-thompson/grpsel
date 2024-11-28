@@ -21,5 +21,5 @@ Plot the cross-validation results from group subset selection for a specified va
 of \code{gamma}.
 }
 \author{
-Ryan Thompson <ryan.thompson@monash.edu>
+Ryan Thompson <ryan.thompson-1@uts.edu.au>
 }

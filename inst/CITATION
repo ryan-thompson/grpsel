@@ -1,13 +1,12 @@
 citHeader("To cite grpsel in publications use:")
 
-citEntry(
-  entry       = "Article",
-  title       = "Group selection and shrinkage: Structured sparsity for semiparametric models",
-  author      = personList(as.person("Ryan Thompson"), as.person("Farshid Vahid")),
-  journal     = "arXiv:2105.12081",
-  year        = "2022",
-  textVersion =
-  paste("Ryan Thompson, Farshid Vahid (2022).",
-        "Group selection and shrinkage: Structured sparsity for semiparametric models",
-        "arXiv:2105.12081")
+bibentry(
+  bibtype       = "Article",
+  title       = "Group selection and shrinkage: Structured sparsity for semiparametric additive models",
+  author      = c(as.person("Ryan Thompson"), as.person("Farshid Vahid")),
+  journal     = "Journal of Computational and Graphical Statistics",
+  volume      = "33",
+  number      = "4",
+  pages       = "1286--1297",
+  year        = "2024"
 )

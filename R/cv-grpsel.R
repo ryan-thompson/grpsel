@@ -1,6 +1,6 @@
 #' @title Cross-validated group subset selection
 #'
-#' @author Ryan Thompson <ryan.thompson@monash.edu>
+#' @author Ryan Thompson <ryan.thompson-1@uts.edu.au>
 #'
 #' @description Fits the regularisation surface for a regression model with a group subset selection
 #' penalty and then cross-validates this surface.
@@ -157,7 +157,7 @@ cv.grpsel <- \(x, y, group = seq_len(ncol(x)),
 
 #' @title Coefficient function for cv.grpsel object
 #'
-#' @author Ryan Thompson <ryan.thompson@monash.edu>
+#' @author Ryan Thompson <ryan.thompson-1@uts.edu.au>
 #'
 #' @description Extracts coefficients for specified values of the tuning parameters.
 #'
@@ -188,7 +188,7 @@ coef.cv.grpsel <- \(object, lambda = 'lambda.min', gamma = 'gamma.min', ...) {
 
 #' @title Predict function for cv.grpsel object
 #'
-#' @author Ryan Thompson <ryan.thompson@monash.edu>
+#' @author Ryan Thompson <ryan.thompson-1@uts.edu.au>
 #'
 #' @description Generate predictions for new data using specified values of the tuning parameters.
 #'
@@ -218,9 +218,11 @@ predict.cv.grpsel <- \(object, x.new, lambda = 'lambda.min', gamma = 'gamma.min'
 # Plot function
 #==================================================================================================#
 
+globalVariables(c('ng', 'cv.mean', 'cv.sd'))
+
 #' @title Plot function for cv.grpsel object
 #'
-#' @author Ryan Thompson <ryan.thompson@monash.edu>
+#' @author Ryan Thompson <ryan.thompson-1@uts.edu.au>
 #'
 #' @description Plot the cross-validation results from group subset selection for a specified value
 #' of \code{gamma}.
@@ -242,10 +244,9 @@ plot.cv.grpsel <- \(x, gamma = 'gamma.min', ...) {
   if (gamma == 'gamma.min') gamma <- x$gamma.min
   index <- which.min(abs(gamma - x$gamma))
   df <- data.frame(cv.mean = x$cv.mean[[index]], cv.sd = x$cv.sd[[index]], ng = x$fit$ng[[index]])
-  p <- ggplot2::ggplot(df, ggplot2::aes_string('ng', 'cv.mean')) +
+  p <- ggplot2::ggplot(df, ggplot2::aes(ng, cv.mean)) +
     ggplot2::geom_point() +
-    ggplot2::geom_errorbar(ggplot2::aes_string(ymin = 'cv.mean - cv.sd',
-                                               ymax = 'cv.mean + cv.sd')) +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin = cv.mean - cv.sd, ymax = cv.mean + cv.sd)) +
     ggplot2::xlab('number of groups')
   p
 

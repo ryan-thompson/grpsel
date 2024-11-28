@@ -1,6 +1,6 @@
 #' @title Group subset selection
 #'
-#' @author Ryan Thompson <ryan.thompson@monash.edu>
+#' @author Ryan Thompson <ryan.thompson-1@uts.edu.au>
 #'
 #' @description Fits the regularisation surface for a regression model with a group subset selection
 #' penalty. The group subset penalty can be combined with either a group lasso or ridge penalty
@@ -80,8 +80,9 @@
 #' \item{loss}{a list of vectors containing the evaluated loss function per value of \code{lambda}
 #' evaluated; an individual vector in the list for each value of \code{gamma}}
 #'
-#' @references Thompson, R. and Vahid, F. (2021). 'Group selection and shrinkage with application to
-#' sparse semiparametric modeling'. arXiv: \href{https://arxiv.org/abs/2105.12081}{2105.12081}.
+#' @references Thompson, R. and Vahid, F. (2024). 'Group selection and shrinkage: Structured
+#' sparsity for semiparametric additive models'. Journal of Computational and Graphical Statistics
+#' 33.4, pp. 1286–1297.
 #'
 #' @example R/examples/example-grpsel.R
 #'
@@ -277,7 +278,7 @@ grpsel <- \(x, y, group = seq_len(ncol(x)),
 
 #' @title Coefficient function for grpsel object
 #'
-#' @author Ryan Thompson <ryan.thompson@monash.edu>
+#' @author Ryan Thompson <ryan.thompson-1@uts.edu.au>
 #'
 #' @description Extracts coefficients for specified values of the tuning parameters.
 #'
@@ -319,7 +320,7 @@ coef.grpsel <- \(object, lambda = NULL, gamma = NULL, ...) {
 
 #' @title Predict function for grpsel object
 #'
-#' @author Ryan Thompson <ryan.thompson@monash.edu>
+#' @author Ryan Thompson <ryan.thompson-1@uts.edu.auu>
 #'
 #' @description Generate predictions for new data using specified values of the tuning parameters.
 #'
@@ -349,9 +350,11 @@ predict.grpsel <- \(object, x.new, lambda = NULL, gamma = NULL, ...) {
 # Plot function
 #==================================================================================================#
 
+globalVariables(c('ng', 'beta', 'predictor'))
+
 #' @title Plot function for grpsel object
 #'
-#' @author Ryan Thompson <ryan.thompson@monash.edu>
+#' @author Ryan Thompson <ryan.thompson-1@uts.edu.au>
 #'
 #' @description Plot the coefficient profiles from group subset selection for a specified value of
 #' \code{gamma}.
@@ -376,7 +379,7 @@ plot.grpsel <- \(x, gamma = 0, ...) {
   df <- data.frame(beta = as.vector(beta), predictor = as.factor(seq_along(beta[, 1])),
                    ng = rep(x$ng[[index]], each = nrow(beta)))
   df <- df[df$beta != 0, ]
-  p <- ggplot2::ggplot(df, ggplot2::aes_string('ng', 'beta', col = 'predictor')) +
+  p <- ggplot2::ggplot(df, ggplot2::aes(ng, beta, col = predictor)) +
     ggplot2::geom_point() +
     ggplot2::xlab('number of groups')
   p
